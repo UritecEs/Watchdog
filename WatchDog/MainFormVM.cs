@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Data;
-using System.Data.Odbc;
-using System.Windows.Forms;
 using Utilities;
 using WatchdogLib;
 

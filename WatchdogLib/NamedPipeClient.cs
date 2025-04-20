@@ -7,261 +7,261 @@ namespace WatchdogLib
 {
 
 
-    /// <summary>
-    /// Wraps a <see cref="NamedPipeClientStream"/>.
-    /// </summary>
-    /// <typeparam name="TReadWrite">Reference type to read from and write to the named pipe</typeparam>
-    public class NamedPipeClient<TReadWrite> : NamedPipeClient<TReadWrite, TReadWrite> where TReadWrite : class
-    {
-        /// <summary>
-        /// Constructs a new <c>NamedPipeClient</c> to connect to the NamedPipeNamedPipeServer/> specified by <paramref name="pipeName"/>.
-        /// </summary>
-        /// <param name="pipeName">Name of the server's pipe</param>
-        public NamedPipeClient(string pipeName) : base(pipeName)
-        {
-        }
-    }
+	/// <summary>
+	/// Wraps a <see cref="NamedPipeClientStream"/>.
+	/// </summary>
+	/// <typeparam name="TReadWrite">Reference type to read from and write to the named pipe</typeparam>
+	public class NamedPipeClient<TReadWrite> : NamedPipeClient<TReadWrite, TReadWrite> where TReadWrite : class
+	{
+		/// <summary>
+		/// Constructs a new <c>NamedPipeClient</c> to connect to the NamedPipeNamedPipeServer/> specified by <paramref name="pipeName"/>.
+		/// </summary>
+		/// <param name="pipeName">Name of the server's pipe</param>
+		public NamedPipeClient(string pipeName) : base(pipeName)
+		{
+		}
+	}
 
-    /// <summary>
-    /// Wraps a <see cref="NamedPipeClientStream"/>.
-    /// </summary>
-    /// <typeparam name="TRead">Reference type to read from the named pipe</typeparam>
-    /// <typeparam name="TWrite">Reference type to write to the named pipe</typeparam>
-    public class NamedPipeClient<TRead, TWrite>
-        where TRead : class
-        where TWrite : class
-    {
-        /// <summary>
-        /// Gets or sets whether the client should attempt to reconnect when the pipe breaks
-        /// due to an error or the other end terminating the connection.
-        /// Default value is <c>true</c>.
-        /// </summary>
-        public bool AutoReconnect { get; set; }
+	/// <summary>
+	/// Wraps a <see cref="NamedPipeClientStream"/>.
+	/// </summary>
+	/// <typeparam name="TRead">Reference type to read from the named pipe</typeparam>
+	/// <typeparam name="TWrite">Reference type to write to the named pipe</typeparam>
+	public class NamedPipeClient<TRead, TWrite>
+		where TRead : class
+		where TWrite : class
+	{
+		/// <summary>
+		/// Gets or sets whether the client should attempt to reconnect when the pipe breaks
+		/// due to an error or the other end terminating the connection.
+		/// Default value is <c>true</c>.
+		/// </summary>
+		public bool AutoReconnect { get; set; }
 
-        /// <summary>
-        /// Invoked whenever a message is received from the server.
-        /// </summary>
-        public event ConnectionMessageEventHandler<TRead, TWrite> ServerMessage;
+		/// <summary>
+		/// Invoked whenever a message is received from the server.
+		/// </summary>
+		public event ConnectionMessageEventHandler<TRead, TWrite> ServerMessage;
 
-        /// <summary>
-        /// Invoked when the client disconnects from the server (e.g., the pipe is closed or broken).
-        /// </summary>
-        public event ConnectionEventHandler<TRead, TWrite> Disconnected;
-
-
-        /// <summary>
-        /// Invoked when the client connects to the server 
-        /// </summary>
-        public event ConnectionEventHandler<TRead, TWrite> Connected;
-        /// <summary>
-        /// Invoked whenever an exception is thrown during a read or write operation on the named pipe.
-        /// </summary>
-        public event PipeExceptionEventHandler Error;
-
-        private readonly string _pipeName;
-        private NamedPipeConnection<TRead, TWrite> _connection;
-
-        private readonly AutoResetEvent _connected    = new AutoResetEvent(false);
-        private readonly AutoResetEvent _disconnected = new AutoResetEvent(false);
-
-        private volatile bool _closedExplicitly;
-        private bool _wasConnected;
-   
-
-        /// <summary>
-        /// Gets a value indicating whether the pipe is connected or not.
-        /// </summary>
-        public bool IsConnected { get { return _connection.IsConnected; } }
+		/// <summary>
+		/// Invoked when the client disconnects from the server (e.g., the pipe is closed or broken).
+		/// </summary>
+		public event ConnectionEventHandler<TRead, TWrite> Disconnected;
 
 
-        /// <summary>
-        /// Constructs a new <c>NamedPipeClient</c> to connect to the NamedPipeServer /> specified by <paramref name="pipeName"/>.
-        /// </summary>
-        /// <param name="pipeName">Name of the server's pipe</param>
-        public NamedPipeClient(string pipeName)
-        {
-            _pipeName = pipeName;
-            AutoReconnect = true;
-        }
+		/// <summary>
+		/// Invoked when the client connects to the server 
+		/// </summary>
+		public event ConnectionEventHandler<TRead, TWrite> Connected;
+		/// <summary>
+		/// Invoked whenever an exception is thrown during a read or write operation on the named pipe.
+		/// </summary>
+		public event PipeExceptionEventHandler Error;
 
-        /// <summary>
-        /// Connects to the named pipe server asynchronously.
-        /// This method returns immediately, possibly before the connection has been established.
-        /// </summary>
-        public void Start()
-        {
-            _closedExplicitly = false;
-            _wasConnected  = false;
-            var worker = new Worker();
-            worker.Error += OnError;
-            worker.DoWork(ListenSync);
-        }
+		private readonly string _pipeName;
+		private NamedPipeConnection<TRead, TWrite> _connection;
 
-        /// <summary>
-        ///     Sends a message to the server over a named pipe.
-        /// </summary>
-        /// <param name="message">Message to send to the server.</param>
-        public void PushMessage(TWrite message)
-        {
-            if (_connection != null)
-                _connection.PushMessage(message);
-        }
+		private readonly AutoResetEvent _connected = new AutoResetEvent(false);
+		private readonly AutoResetEvent _disconnected = new AutoResetEvent(false);
 
-        /// <summary>
-        /// Closes the named pipe.
-        /// </summary>
-        public void Stop()
-        {
-            _closedExplicitly = true;
-            if (_connection != null)
-                _connection.Close();
-        }
+		private volatile bool _closedExplicitly;
+		private bool _wasConnected;
 
-        #region Wait for connection/disconnection
 
-        /// <summary>
-        /// Waits for connection
-        /// </summary>
-        public void WaitForConnection()
-        {
-            _connected.WaitOne();
-        }
+		/// <summary>
+		/// Gets a value indicating whether the pipe is connected or not.
+		/// </summary>
+		public bool IsConnected { get { return _connection.IsConnected; } }
 
-        /// <summary>
-        /// Waits for connection with a time-out
-        /// </summary>
-        /// <param name="millisecondsTimeout"></param>
-        public void WaitForConnection(int millisecondsTimeout)
-        {
-            _connected.WaitOne(millisecondsTimeout);
-        }
 
-        /// <summary>
-        /// Waits for connection with a time-out
-        /// </summary>
-        /// <param name="timeout"></param>
-        public void WaitForConnection(TimeSpan timeout)
-        {
-            _connected.WaitOne(timeout);
-        }
+		/// <summary>
+		/// Constructs a new <c>NamedPipeClient</c> to connect to the NamedPipeServer /> specified by <paramref name="pipeName"/>.
+		/// </summary>
+		/// <param name="pipeName">Name of the server's pipe</param>
+		public NamedPipeClient(string pipeName)
+		{
+			_pipeName = pipeName;
+			AutoReconnect = true;
+		}
 
-        /// <summary>
-        /// Wait for disconnection
-        /// </summary>
-        public void WaitForDisconnection()
-        {
-            _disconnected.WaitOne();
-        }
+		/// <summary>
+		/// Connects to the named pipe server asynchronously.
+		/// This method returns immediately, possibly before the connection has been established.
+		/// </summary>
+		public void Start()
+		{
+			_closedExplicitly = false;
+			_wasConnected = false;
+			var worker = new Worker();
+			worker.Error += OnError;
+			worker.DoWork(ListenSync);
+		}
 
-        /// <summary>
-        /// Wait for disconnection with time-out
-        /// </summary>
-        /// <param name="millisecondsTimeout"></param>
-        public void WaitForDisconnection(int millisecondsTimeout)
-        {
-            _disconnected.WaitOne(millisecondsTimeout);
-        }
+		/// <summary>
+		///     Sends a message to the server over a named pipe.
+		/// </summary>
+		/// <param name="message">Message to send to the server.</param>
+		public void PushMessage(TWrite message)
+		{
+			if (_connection != null)
+				_connection.PushMessage(message);
+		}
 
-        /// <summary>
-        /// Wait for disconnection with time-out
-        /// </summary>
-        /// <param name="timeout"></param>
-        public void WaitForDisconnection(TimeSpan timeout)
-        {
-            _disconnected.WaitOne(timeout);
-        }
+		/// <summary>
+		/// Closes the named pipe.
+		/// </summary>
+		public void Stop()
+		{
+			_closedExplicitly = true;
+			if (_connection != null)
+				_connection.Close();
+		}
 
-        #endregion
+		#region Wait for connection/disconnection
 
-        #region Private methods
+		/// <summary>
+		/// Waits for connection
+		/// </summary>
+		public void WaitForConnection()
+		{
+			_connected.WaitOne();
+		}
 
-        private void ListenSync()
-        {
-            // Get the name of the data pipe that should be used from now on by this NamedPipeClient
-            var handshake = PipeClientFactory.Connect<string, string>(_pipeName);
-            var dataPipeName = handshake.ReadObject();
-            handshake.Close();
+		/// <summary>
+		/// Waits for connection with a time-out
+		/// </summary>
+		/// <param name="millisecondsTimeout"></param>
+		public void WaitForConnection(int millisecondsTimeout)
+		{
+			_connected.WaitOne(millisecondsTimeout);
+		}
 
-            // Connect to the actual data pipe
-            var dataPipe = PipeClientFactory.CreateAndConnectPipe(dataPipeName);
+		/// <summary>
+		/// Waits for connection with a time-out
+		/// </summary>
+		/// <param name="timeout"></param>
+		public void WaitForConnection(TimeSpan timeout)
+		{
+			_connected.WaitOne(timeout);
+		}
 
-            // Create a Connection object for the data pipe
-            _connection = ConnectionFactory.CreateConnection<TRead, TWrite>(dataPipe);
-            _connection.Disconnected   += OnDisconnected;
-            _connection.ReceiveMessage += OnReceiveMessage;
-            _connection.Error          += ConnectionOnError;
-            _connection.Open();
+		/// <summary>
+		/// Wait for disconnection
+		/// </summary>
+		public void WaitForDisconnection()
+		{
+			_disconnected.WaitOne();
+		}
 
-            _connected.Set();
-        }
+		/// <summary>
+		/// Wait for disconnection with time-out
+		/// </summary>
+		/// <param name="millisecondsTimeout"></param>
+		public void WaitForDisconnection(int millisecondsTimeout)
+		{
+			_disconnected.WaitOne(millisecondsTimeout);
+		}
 
-        private void OnDisconnected(NamedPipeConnection<TRead, TWrite> connection)
-        {
-            if (Disconnected != null)
-                Disconnected(connection);
+		/// <summary>
+		/// Wait for disconnection with time-out
+		/// </summary>
+		/// <param name="timeout"></param>
+		public void WaitForDisconnection(TimeSpan timeout)
+		{
+			_disconnected.WaitOne(timeout);
+		}
 
-            _wasConnected = false;
+		#endregion
 
-            _disconnected.Set();
+		#region Private methods
 
-            // Reconnect
-            if (AutoReconnect && !_closedExplicitly)
-                Start();
-        }
+		private void ListenSync()
+		{
+			// Get the name of the data pipe that should be used from now on by this NamedPipeClient
+			var handshake = PipeClientFactory.Connect<string, string>(_pipeName);
+			var dataPipeName = handshake.ReadObject();
+			handshake.Close();
 
-        private void OnReceiveMessage(NamedPipeConnection<TRead, TWrite> connection, TRead message)
-        {
+			// Connect to the actual data pipe
+			var dataPipe = PipeClientFactory.CreateAndConnectPipe(dataPipeName);
 
-            if (!_wasConnected && Connected != null)
-            {
-                Connected(connection);
-                _wasConnected = true;
-            }
+			// Create a Connection object for the data pipe
+			_connection = ConnectionFactory.CreateConnection<TRead, TWrite>(dataPipe);
+			_connection.Disconnected += OnDisconnected;
+			_connection.ReceiveMessage += OnReceiveMessage;
+			_connection.Error += ConnectionOnError;
+			_connection.Open();
 
-            if (ServerMessage != null)
-                ServerMessage(connection, message);
-        }
+			_connected.Set();
+		}
 
-        /// <summary>
-        ///     Invoked on the UI thread.
-        /// </summary>
-        private void ConnectionOnError(NamedPipeConnection<TRead, TWrite> connection, Exception exception)
-        {
-            OnError(exception);
-        }
+		private void OnDisconnected(NamedPipeConnection<TRead, TWrite> connection)
+		{
+			if (Disconnected != null)
+				Disconnected(connection);
 
-        /// <summary>
-        ///     Invoked on the UI thread.
-        /// </summary>
-        /// <param name="exception"></param>
-        private void OnError(Exception exception)
-        {
-            if (Error != null)
-                Error(exception);
-        }
+			_wasConnected = false;
 
-        #endregion
-    }
+			_disconnected.Set();
 
-    static class PipeClientFactory
-    {
-        public static PipeStreamWrapper<TRead, TWrite> Connect<TRead, TWrite>(string pipeName)
-            where TRead : class
-            where TWrite : class
-        {
-            return new PipeStreamWrapper<TRead, TWrite>(CreateAndConnectPipe(pipeName));
-        }
+			// Reconnect
+			if (AutoReconnect && !_closedExplicitly)
+				Start();
+		}
 
-        public static NamedPipeClientStream CreateAndConnectPipe(string pipeName)
-        {
-            var pipe = CreatePipe(pipeName);
-            pipe.Connect();
-            return pipe;
-        }
+		private void OnReceiveMessage(NamedPipeConnection<TRead, TWrite> connection, TRead message)
+		{
 
-        private static NamedPipeClientStream CreatePipe(string pipeName)
-        {
-            return new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.WriteThrough);
-        }
-    }
+			if (!_wasConnected && Connected != null)
+			{
+				Connected(connection);
+				_wasConnected = true;
+			}
+
+			if (ServerMessage != null)
+				ServerMessage(connection, message);
+		}
+
+		/// <summary>
+		///     Invoked on the UI thread.
+		/// </summary>
+		private void ConnectionOnError(NamedPipeConnection<TRead, TWrite> connection, Exception exception)
+		{
+			OnError(exception);
+		}
+
+		/// <summary>
+		///     Invoked on the UI thread.
+		/// </summary>
+		/// <param name="exception"></param>
+		private void OnError(Exception exception)
+		{
+			if (Error != null)
+				Error(exception);
+		}
+
+		#endregion
+	}
+
+	static class PipeClientFactory
+	{
+		public static PipeStreamWrapper<TRead, TWrite> Connect<TRead, TWrite>(string pipeName)
+			where TRead : class
+			where TWrite : class
+		{
+			return new PipeStreamWrapper<TRead, TWrite>(CreateAndConnectPipe(pipeName));
+		}
+
+		public static NamedPipeClientStream CreateAndConnectPipe(string pipeName)
+		{
+			var pipe = CreatePipe(pipeName);
+			pipe.Connect();
+			return pipe;
+		}
+
+		private static NamedPipeClientStream CreatePipe(string pipeName)
+		{
+			return new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.WriteThrough);
+		}
+	}
 }

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WatchdogLib
+﻿namespace WatchdogLib
 {
-    public class RebootHandler
-    {
-        
-    }
+	public class RebootHandler
+	{
+
+	}
 }

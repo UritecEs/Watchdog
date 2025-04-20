@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Utilities;
 
 namespace Utilities
 {
@@ -28,7 +27,7 @@ namespace Utilities
 
 		private readonly AsyncWorkerJob _workerJob;
 
-        private System.Threading.Tasks.Task _workerTask;
+		private System.Threading.Tasks.Task _workerTask;
 
 		public string Name { get; set; }
 
@@ -82,7 +81,7 @@ namespace Utilities
 				}
 				else
 				{
-                    //throw new InvalidOperationException("The worker is already started.");
+					//throw new InvalidOperationException("The worker is already started.");
 				}
 			}
 		}
@@ -108,7 +107,7 @@ namespace Utilities
 				}
 				else
 				{
-                    //throw new InvalidOperationException("The worker is already stopped.");
+					//throw new InvalidOperationException("The worker is already stopped.");
 				}
 			}
 		}
