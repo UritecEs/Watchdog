@@ -30,6 +30,8 @@ namespace WatchdogLib
 
 		public List<ApplicationHandlerConfig> ApplicationHandlers { get; set; }
 		public bool ShowTrayIcon { get; set; }
+        public bool ShowMainForm { get; set; }
+        public bool ShowLogForm { get; set; }
 		public bool PeriodicReboot { get; set; }
 		public int RebootPeriod { get; set; }
 		public DateTime RebootBefore { get; set; }
@@ -42,6 +44,7 @@ namespace WatchdogLib
 		{
 			ApplicationHandlers = new List<ApplicationHandlerConfig>();
 			ShowTrayIcon = true;
+            ShowMainForm = true;
 
 			//var app = new ApplicationHandlerConfig()
 			//{

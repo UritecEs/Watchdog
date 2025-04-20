@@ -6,6 +6,7 @@ namespace WatchDog
 {
     public partial class LogForm : Form
     {
+		public EventHandler HideEvent;
         public LoggingView LoggingView { get { return loggingView;  } }
 
         public LogForm()
@@ -19,6 +20,7 @@ namespace WatchDog
             {
                 e.Cancel = true;
                 Hide();
+				HideEvent?.Invoke(this, null);
             }
         }
 
@@ -28,6 +30,7 @@ namespace WatchDog
             if (WindowState == FormWindowState.Minimized)
             {
                 this.Hide();
+				HideEvent?.Invoke(this, null);
             }
         }
     

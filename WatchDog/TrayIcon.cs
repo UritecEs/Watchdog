@@ -40,7 +40,12 @@ namespace WatchDog
 				// Todo visibility dependent on configuration. If not, only show config form on 2nd startup
 
 				_logForm = new LogForm() { Visible = false };
+				_logForm.Visible = _configuration.ShowLogForm;
+				_logForm.HideEvent += logForm_Hide;
+
 				_mainForm = new MainForm();
+                _mainForm.Visible = _configuration.ShowMainForm;
+				_mainForm.HideEvent += mainForm_Hide;
 
 				_trayIcon.Visible = _configuration.ShowTrayIcon;
 				InitializeApplication();
@@ -151,6 +156,20 @@ namespace WatchDog
 			private void ShowLogMenuItemClick(object sender, EventArgs e)
 			{
 				_logForm.Visible = true;
+                _configuration.ShowLogForm = true;
+				_configurationSerializer.Serialize(_configuration);
+			}
+
+			private void logForm_Hide(object sender, EventArgs e)
+			{
+				_configuration.ShowLogForm = false;
+				_configurationSerializer.Serialize(_configuration);
+			}
+
+			private void mainForm_Hide(object sender, EventArgs e)
+			{
+				_configuration.ShowMainForm = false;
+				_configurationSerializer.Serialize(_configuration);
 			}
 
 			private void OnApplicationExit(object sender, EventArgs e)
@@ -159,7 +178,7 @@ namespace WatchDog
 
 				if (_trayIcon != null) _trayIcon.Visible = false;
 
-				Application.Exit();
+                //Application.Exit();
 			}
 
 			private void TrayIconClick(object sender, EventArgs e)
@@ -169,6 +188,8 @@ namespace WatchDog
 				{
 					//_logForm.Visible = true;
 					_mainForm.Visible = true;
+					_configuration.ShowMainForm = true;
+					_configurationSerializer.Serialize(_configuration);
 				}
 			}
 
@@ -236,8 +257,10 @@ namespace WatchDog
 
 			private void ApplicationExit()
 			{
-				_trayIcon.Visible = false;
-				OnApplicationExit(this, null);
+				Application.Exit();
+
+				//_trayIcon.Visible = false;
+				//OnApplicationExit(this, null);
 			}
 
 		}
