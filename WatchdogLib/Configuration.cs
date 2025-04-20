@@ -85,8 +85,8 @@ namespace WatchdogLib
 			GrantKillRequest = true;
 			HeartbeatInterval = 20;
 			MinProcesses = 1;
-			MaxProcesses = 10;
-			Active = false;
+            MaxProcesses            = 1;
+            Active                  = true;
 			KeepExistingNoProcesses = true;
 			StartupMonitorDelay = 20;
 		}
