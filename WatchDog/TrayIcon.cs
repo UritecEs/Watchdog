@@ -137,7 +137,7 @@ namespace WatchDog
 					{
 						Name = "_suspendResumeMenuItem",
 						Size = new Size(152, 22),
-						Text = "Shutdown"
+						Text = "Exit watchdog"
 					};
 					_closeMenuItem.Click += CloseMenuItemClick;
 					_trayIconContextMenu.Items.AddRange(new ToolStripItem[] { _closeMenuItem });
