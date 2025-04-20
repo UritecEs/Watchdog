@@ -17,7 +17,6 @@ namespace WatchDog
 
             var openFileDialog1 = new OpenFileDialog
             {
-                InitialDirectory = "c:\\",
                 Filter = "executable files |*.exe;*.com;*.bat|All files|*.*",
 
                 RestoreDirectory = true
@@ -45,11 +44,6 @@ namespace WatchDog
 
         private void MainFormFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                Hide();
-            }
         }
 
         //private void ButtonActivateClick(object sender, EventArgs e)

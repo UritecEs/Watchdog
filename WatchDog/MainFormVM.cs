@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using Utilities;
 using WatchdogLib;
 
@@ -46,36 +47,31 @@ namespace WatchDog
 		private void ButtonAddProcessClick(object sender, EventArgs e)
 		{
 			var applicationHandlerConfig = new ApplicationHandlerConfig();
-			_configuration.ApplicationHandlers.Add(applicationHandlerConfig);
-
 			var editForm = new EditForm();
-			var editFormVm = new EditFormVm(editForm, applicationHandlerConfig, _configuration);
-			editForm.ShowDialog(_mainForm);
+			var editFormVm = new EditFormVm(editForm, applicationHandlerConfig);
+			var result = editForm.ShowDialog(_mainForm);
+			if (result != DialogResult.OK)
+				return;
 
-			if (applicationHandlerConfig.IsValid())
-			{
-				_serializer.Serialize(_configuration);
-				_mainForm.listBoxMonitoredApplications.Items.Add(applicationHandlerConfig.ApplicationName);
-				SelectMenuItemInList(_mainForm.listBoxMonitoredApplications.Items.Count - 1);
-				SetForm(applicationHandlerConfig);
-			}
-			else
-			{
-				_configuration.ApplicationHandlers.Remove(applicationHandlerConfig);
-			}
+			_configuration.ApplicationHandlers.Add(applicationHandlerConfig);
+			_serializer.Serialize(_configuration);
+			_mainForm.listBoxMonitoredApplications.Items.Add(applicationHandlerConfig.ApplicationName);
+			SelectMenuItemInList(_mainForm.listBoxMonitoredApplications.Items.Count - 1);
+			SetForm(applicationHandlerConfig);
 		}
 
 		private void ButtonEditProcessClick(object sender, EventArgs e)
 		{
 			var i = _mainForm.listBoxMonitoredApplications.SelectedIndex;
-
-			if (i == -1)
+			if (i < 0)
+			{
+				MessageBox.Show("Please, select an element to edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
-
+			}
 			var applicationHandlerConfig = _configuration.ApplicationHandlers[i];
 
 			var editForm = new EditForm();
-			var editFormVm = new EditFormVm(editForm, applicationHandlerConfig, _configuration);
+			var editFormVm = new EditFormVm(editForm, applicationHandlerConfig);
 			editForm.ShowDialog(_mainForm);
 
 			_serializer.Serialize(_configuration);
@@ -85,15 +81,13 @@ namespace WatchDog
 
 		private void ButtonDeleteProcessOnClick(object sender, EventArgs eventArgs)
 		{
-			DeleteSelectedItem();
-		}
-
-		private void DeleteSelectedItem()
-		{
 			var i = _mainForm.listBoxMonitoredApplications.SelectedIndex;
 
-			if (i == -1)
+			if (i < 0)
+			{
+				MessageBox.Show("Please, select an element to remove.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
+			}
 
 			_mainForm.listBoxMonitoredApplications.Items.RemoveAt(i);
 			_configuration.ApplicationHandlers.RemoveAt(i);
@@ -182,9 +176,12 @@ namespace WatchDog
 		//    applicationHandlerConfig.Active 
 		//}
 
+		/// <summary>
+		/// Refresh the data in the form to show the selected application
+		/// </summary>
+		/// <param name="applicationHandlerConfig"></param>
 		private void SetForm(ApplicationHandlerConfig applicationHandlerConfig)
 		{
-
 			_mainForm.textBoxProcessName.Text = applicationHandlerConfig.ApplicationName;
 			_mainForm.textBoxApplicationPath.Text = applicationHandlerConfig.ApplicationPath;
 
@@ -205,5 +202,7 @@ namespace WatchDog
 			if (index < 0) return;
 			SetSelectedItem(index);
 		}
+
+
 	}
 }

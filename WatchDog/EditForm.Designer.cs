@@ -84,6 +84,7 @@
 			this.buttonSelectFile.TabIndex = 7;
 			this.buttonSelectFile.Text = "...";
 			this.buttonSelectFile.UseVisualStyleBackColor = true;
+			this.buttonSelectFile.Click += new System.EventHandler(this.ButtonSelectFileClick);
 			// 
 			// textBoxProcessName
 			// 
@@ -305,6 +306,7 @@
 			// 
 			// buttonAcceptChanges
 			// 
+			this.buttonAcceptChanges.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonAcceptChanges.Location = new System.Drawing.Point(396, 422);
 			this.buttonAcceptChanges.Name = "buttonAcceptChanges";
 			this.buttonAcceptChanges.Size = new System.Drawing.Size(98, 28);

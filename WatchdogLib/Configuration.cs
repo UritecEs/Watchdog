@@ -60,8 +60,6 @@ namespace WatchdogLib
 
 	public class ApplicationHandlerConfig
 	{
-		public bool IsValid() => !string.IsNullOrEmpty(ApplicationPath) || !string.IsNullOrEmpty(ApplicationName);
-
 		public int NonResponsiveInterval { get; set; }
 		public string ApplicationPath { get; set; }
 		public string ApplicationName { get; set; }
