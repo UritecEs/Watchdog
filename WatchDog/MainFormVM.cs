@@ -99,9 +99,17 @@ namespace WatchDog
 			_serializer.Serialize(_configuration);
 
 			i = Math.Max(0, i - 1);
-			SelectMenuItemInList(Math.Max(0, i - 1));
-			if (i < _configuration.ApplicationHandlers.Count)
+
+			if (_configuration.ApplicationHandlers.Count > 0)
+			{
+				SelectMenuItemInList(i);
 				SetForm(_configuration.ApplicationHandlers[i]);
+			}
+			else
+			{
+				_mainForm.textBoxProcessName.Text = string.Empty;
+				_mainForm.textBoxApplicationPath.Text = string.Empty;
+			}
 
 		}
 
