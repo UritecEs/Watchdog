@@ -82,8 +82,8 @@ namespace WatchDog
 		{
 			_applicationHandlerConfig.NonResponsiveInterval = int.Parse(_editApplicationsForm.textBoxUnresponsiveInterval.Text);
 			_applicationHandlerConfig.HeartbeatInterval = uint.Parse(_editApplicationsForm.textBoxHeartbeatInterval.Text);
-			_applicationHandlerConfig.MaxProcesses = int.Parse(_editApplicationsForm.textBoxMaxProcesses.Text);
-			_applicationHandlerConfig.MinProcesses = int.Parse(_editApplicationsForm.textBoxMinProcesses.Text);
+			//_applicationHandlerConfig.MaxProcesses                    = int.Parse(_editApplicationsForm.textBoxMaxProcesses.Text)         ;
+			//_applicationHandlerConfig.MinProcesses                    = int.Parse(_editApplicationsForm.textBoxMinProcesses.Text)         ;
 			_applicationHandlerConfig.ApplicationPath = _editApplicationsForm.textBoxApplicationPath.Text.Trim('\"');
 			if (string.IsNullOrWhiteSpace(_editApplicationsForm.textBoxProcessName.Text))
 				_applicationHandlerConfig.ApplicationName = Path.GetFileNameWithoutExtension(_applicationHandlerConfig.ApplicationPath);
@@ -114,8 +114,8 @@ namespace WatchDog
 		{
 			_editApplicationsForm.textBoxUnresponsiveInterval.Text = _applicationHandlerConfig.NonResponsiveInterval.ToString();
 			_editApplicationsForm.textBoxHeartbeatInterval.Text = _applicationHandlerConfig.HeartbeatInterval.ToString();
-			_editApplicationsForm.textBoxMaxProcesses.Text = _applicationHandlerConfig.MaxProcesses.ToString();
-			_editApplicationsForm.textBoxMinProcesses.Text = _applicationHandlerConfig.MinProcesses.ToString();
+			//_editApplicationsForm.textBoxMaxProcesses.Text         = _applicationHandlerConfig.MaxProcesses.ToString();
+			//_editApplicationsForm.textBoxMinProcesses.Text         = _applicationHandlerConfig.MinProcesses.ToString();
 
 			_editApplicationsForm.textBoxProcessName.Text = _applicationHandlerConfig.ApplicationName;
 			_editApplicationsForm.textBoxApplicationPath.Text = _applicationHandlerConfig.ApplicationPath;
@@ -130,8 +130,8 @@ namespace WatchDog
 		{
 			return _editApplicationsForm.textBoxUnresponsiveInterval.Text == applicationHandlerConfig.NonResponsiveInterval.ToString() &&
 				   _editApplicationsForm.textBoxHeartbeatInterval.Text == applicationHandlerConfig.HeartbeatInterval.ToString() &&
-				   _editApplicationsForm.textBoxMaxProcesses.Text == applicationHandlerConfig.MaxProcesses.ToString() &&
-				   _editApplicationsForm.textBoxMinProcesses.Text == applicationHandlerConfig.MinProcesses.ToString() &&
+				   //_editApplicationsForm.textBoxMaxProcesses.Text          == applicationHandlerConfig.MaxProcesses.ToString()         &&
+				   //_editApplicationsForm.textBoxMinProcesses.Text          == applicationHandlerConfig.MinProcesses.ToString()         &&
 				   _editApplicationsForm.textBoxProcessName.Text == applicationHandlerConfig.ApplicationName &&
 				   _editApplicationsForm.textBoxApplicationPath.Text == applicationHandlerConfig.ApplicationPath &&
 				   _editApplicationsForm.checkBoxUseHeartbeat.Checked == applicationHandlerConfig.UseHeartbeat &&

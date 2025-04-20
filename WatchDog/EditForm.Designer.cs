@@ -35,11 +35,6 @@
 			this.textBoxApplicationPath = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.textBoxMaxProcesses = new System.Windows.Forms.TextBox();
-			this.textBoxMinProcesses = new System.Windows.Forms.TextBox();
-			this.label10 = new System.Windows.Forms.Label();
-			this.label11 = new System.Windows.Forms.Label();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.checkBoxGrantKillRequest = new System.Windows.Forms.CheckBox();
 			this.label8 = new System.Windows.Forms.Label();
@@ -56,7 +51,6 @@
 			this.label6 = new System.Windows.Forms.Label();
 			this.buttonAcceptChanges = new System.Windows.Forms.Button();
 			this.groupBox2.SuspendLayout();
-			this.groupBox3.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox5.SuspendLayout();
 			this.SuspendLayout();
@@ -122,53 +116,6 @@
 			this.label1.TabIndex = 4;
 			this.label1.Text = "Path";
 			// 
-			// groupBox3
-			// 
-			this.groupBox3.Controls.Add(this.textBoxMaxProcesses);
-			this.groupBox3.Controls.Add(this.textBoxMinProcesses);
-			this.groupBox3.Controls.Add(this.label10);
-			this.groupBox3.Controls.Add(this.label11);
-			this.groupBox3.Location = new System.Drawing.Point(12, 118);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(481, 73);
-			this.groupBox3.TabIndex = 4;
-			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "Processes";
-			// 
-			// textBoxMaxProcesses
-			// 
-			this.textBoxMaxProcesses.Location = new System.Drawing.Point(142, 50);
-			this.textBoxMaxProcesses.Name = "textBoxMaxProcesses";
-			this.textBoxMaxProcesses.Size = new System.Drawing.Size(37, 20);
-			this.textBoxMaxProcesses.TabIndex = 11;
-			this.textBoxMaxProcesses.Text = "1";
-			// 
-			// textBoxMinProcesses
-			// 
-			this.textBoxMinProcesses.Location = new System.Drawing.Point(142, 24);
-			this.textBoxMinProcesses.Name = "textBoxMinProcesses";
-			this.textBoxMinProcesses.Size = new System.Drawing.Size(37, 20);
-			this.textBoxMinProcesses.TabIndex = 10;
-			this.textBoxMinProcesses.Text = "1";
-			// 
-			// label10
-			// 
-			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(11, 53);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(128, 13);
-			this.label10.TabIndex = 9;
-			this.label10.Text = "Max number of processes";
-			// 
-			// label11
-			// 
-			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(11, 27);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(125, 13);
-			this.label11.TabIndex = 8;
-			this.label11.Text = "Min number of processes";
-			// 
 			// groupBox4
 			// 
 			this.groupBox4.Controls.Add(this.checkBoxGrantKillRequest);
@@ -177,7 +124,7 @@
 			this.groupBox4.Controls.Add(this.textBoxHeartbeatInterval);
 			this.groupBox4.Controls.Add(this.label5);
 			this.groupBox4.Controls.Add(this.checkBoxUseHeartbeat);
-			this.groupBox4.Location = new System.Drawing.Point(12, 197);
+			this.groupBox4.Location = new System.Drawing.Point(13, 118);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(481, 113);
 			this.groupBox4.TabIndex = 5;
@@ -263,7 +210,7 @@
 			this.groupBox5.Controls.Add(this.label9);
 			this.groupBox5.Controls.Add(this.textBoxUnresponsiveInterval);
 			this.groupBox5.Controls.Add(this.label6);
-			this.groupBox5.Location = new System.Drawing.Point(12, 316);
+			this.groupBox5.Location = new System.Drawing.Point(13, 237);
 			this.groupBox5.Name = "groupBox5";
 			this.groupBox5.Size = new System.Drawing.Size(482, 93);
 			this.groupBox5.TabIndex = 7;
@@ -324,7 +271,6 @@
 			this.Controls.Add(this.buttonActivate);
 			this.Controls.Add(this.groupBox5);
 			this.Controls.Add(this.groupBox4);
-			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -334,8 +280,6 @@
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
-			this.groupBox3.ResumeLayout(false);
-			this.groupBox3.PerformLayout();
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox4.PerformLayout();
 			this.groupBox5.ResumeLayout(false);
@@ -352,11 +296,6 @@
 		public System.Windows.Forms.TextBox textBoxApplicationPath;
 		public System.Windows.Forms.Label label2;
 		public System.Windows.Forms.Label label1;
-		public System.Windows.Forms.GroupBox groupBox3;
-		public System.Windows.Forms.TextBox textBoxMaxProcesses;
-		public System.Windows.Forms.TextBox textBoxMinProcesses;
-		public System.Windows.Forms.Label label10;
-		public System.Windows.Forms.Label label11;
 		public System.Windows.Forms.GroupBox groupBox4;
 		public System.Windows.Forms.CheckBox checkBoxGrantKillRequest;
 		public System.Windows.Forms.Label label8;
