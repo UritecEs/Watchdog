@@ -42,12 +42,23 @@ namespace WatchdogLib
 			Process = process;
 		}
 	}
-
+	
+	/// <summary>
+	/// ProcessHandler is a class that handles the execution of a process and monitors its status.
+	/// </summary>
 	public class ProcessHandler
 	{
 
 		private readonly object _exitedLock = new object();
+		
+		/// <summary>
+		/// The stopwatch for checking if the process is non-responsive.
+		/// </summary>
 		private Stopwatch _nonresponsiveInterval;
+		
+		/// <summary>
+		/// The stopwatch for checking if the process has started.
+		/// </summary>
 		private Stopwatch _fromStart;
 
 		public DataReceivedEventHandler OutputHandler;
@@ -57,18 +68,39 @@ namespace WatchdogLib
 		public event EventHandler<ProcessMessageArgs> ErrorHandler;
 
 
-
-		public int NonResponsiveInterval { get; set; }
+		/// <summary>
+		/// The path to the executable to be run.
+		/// </summary>
 		public string Executable { get; set; }
-
+		
+		/// <summary>
+		/// The arguments to be passed to the executable.
+		/// </summary>
 		public string Args { get; set; }
-
+		
+		/// <summary>
+		/// Boolean that indicates if the process should wait for exit.
+		/// </summary>
 		public bool WaitForExit { get; set; }
+		
+		/// <summary>
+		/// Boolean that indicates if the process should run in the directory of the executable.
+		/// </summary>
 		public bool RunInDir { get; set; }
-		public uint NonresponsiveInterval { get; set; }
-
+		
+		/// <summary>
+		/// The interval in seconds to wait before considering the process as non-responsive.
+		/// </summary>
+		public int NonResponsiveInterval { get; set; }
+		
+		/// <summary>
+		/// The interval in seconds to wait before considering the process as started.
+		/// </summary>
 		public uint StartingInterval { get; set; }
 
+		/// <summary>
+		/// Boolean that indicates if the process has exited.
+		/// </summary>
 		public bool HasExited
 		{
 			get { return (Process == null) || Process.HasExited; }
@@ -95,12 +127,15 @@ namespace WatchdogLib
 			}
 		}
 
-
+		/// <summary>
+		/// Constructor for the ProcessHandler class
+		/// that sets default values for the properties.
+		/// </summary>
 		public ProcessHandler()
 		{
 			WaitForExit = true;
 			RunInDir = true;
-			NonresponsiveInterval = 2000;
+			NonResponsiveInterval = 2000;
 			StartingInterval = 5000;
 			_nonresponsiveInterval = new Stopwatch();
 			_fromStart = new Stopwatch();
@@ -154,7 +189,10 @@ namespace WatchdogLib
 			}
 			return true;
 		}
-
+		
+		/// <summary>
+		/// Method to end the process.
+		/// </summary>
 		private void EndProcess()
 		{
 			if (Process == null) return;
@@ -223,34 +261,55 @@ namespace WatchdogLib
 
 			}
 		}
-
+		
+		/// <summary>
+		/// Set Running to true when the process has exited.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ProcessExited(object sender, EventArgs e)
 		{
 			Running = true;
 		}
-
+		
+		/// <summary>
+		/// boolean that indicates if the process is running.
+		/// </summary>
 		public bool Running { get; set; }
 
-
+		/// <summary>
+		/// The process that is being monitored.
+		/// </summary>
 		public Process Process { get; private set; }
+		
+		/// <summary>
+		/// The name of the processHandler.
+		/// </summary>
 		public string Name { get; private set; }
-
+		
+		/// <summary>
+		/// boolean that indicates if the process is not responding after the specified interval.
+		/// </summary>
 		public bool NotRespondingAfterInterval
 		{
-			get { return (!Responding && _nonresponsiveInterval.ElapsedMilliseconds > NonresponsiveInterval); }
+			get { return (!Responding && _nonresponsiveInterval.ElapsedMilliseconds > NonResponsiveInterval); }
 		}
-
+		
+		/// <summary>
+		/// boolean that indicates if the process is starting after the specified interval.
+		/// </summary>
 		public bool IsStarting
 		{
 			get { return (_fromStart.ElapsedMilliseconds < StartingInterval); }
 		}
 
-
+		/// <summary>
+		/// Method that call to private EndProcess method to end the process.
+		/// </summary>
 		public void Close()
 		{
 			EndProcess();
 		}
-
 
 		private void Output(object sender, DataReceivedEventArgs dataReceivedEventArgs)
 		{
@@ -268,7 +327,11 @@ namespace WatchdogLib
 			var progressEventArgs = new ProcessMessageArgs(dataReceivedEventArgs.Data, Process);
 			if (ErrorOutputHandler != null) ErrorOutputHandler(sender, progressEventArgs);
 		}
-
+		
+		/// <summary>
+		/// Kill the process.
+		/// </summary>
+		/// <returns></returns>
 		public bool Kill()
 		{
 			return ProcessUtils.KillProcess(Process);

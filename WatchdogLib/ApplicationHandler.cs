@@ -7,29 +7,98 @@ using Utilities;
 
 namespace WatchdogLib
 {
+	/// <summary>
+	/// Provides functionality to monitor, manage, and restart application processes.
+	/// It supports checking for non-responsive processes via heartbeat signals,
+	/// handling duplicate and exited processes, and ensuring that the number of processes
+	/// stays within predefined minimum and maximum limits.
+	/// </summary>
 	public class ApplicationHandler
 	{
 		private readonly HeartbeatServer _heartbeatServer;
 		//private ApplicationHandlerConfig _applicationHandlerConfig;
 
-		public List<ProcessHandler> ProcessHandlers { get; set; }
+		/// <summary>
+		/// Gets or sets the list of process handlers monitoring the application processes.
+		/// </summary>
+		private List<ProcessHandler> ProcessHandlers { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the time interval used to decide when a process is considered non-responsive.
+		/// </summary>
 		public int NonResponsiveInterval { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the path to the application executable.
+		/// </summary>
 		public string ApplicationPath { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the name of the application.
+		/// </summary>
 		public string ApplicationName { get; set; }
+		
+		/// <summary>
+		/// Gets or sets a value indicating whether heartbeat monitoring is enabled.
+		/// </summary>
 		public bool UseHeartbeat { get; set; }
 		/// <summary>
 		/// Gets or sets the logger instance used to record messages for monitoring purposes.
 		/// </summary>
 		private Logger Logger { get; set; }
+		
+		/// <summary>
+		/// Gets or sets a value indicating whether the handler is permitted to issue kill requests for processes.
+		/// </summary>
 		public bool GrantKillRequest { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the interval (in seconds) used by the heartbeat mechanism to check process responsiveness.
+		/// </summary>
 		public uint HeartbeatInterval { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the maximum allowed number of running processes.
+		/// </summary>
 		public int MaxProcesses { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the minimum required number of running processes.
+		/// </summary>
 		public int MinProcesses { get; set; }
-
+		
+		/// <summary>
+		/// Gets or sets a value indicating whether this handler is actively monitoring processes.
+		/// </summary>
 		public bool Active { get; set; }
+		
+		/// <summary>
+		/// Gets or sets a value that determines whether to maintain the existing process count even if no process is currently running.
+		/// </summary>
 		public bool KeepExistingNoProcesses { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the delay (in seconds) to wait after startup before beginning process monitoring.
+		/// </summary>
 		public uint StartupMonitorDelay { get; set; }
-		public ApplicationHandler(string applicationName, string applicationPath, int nonResponsiveInterval, uint heartbeatInterval = 15, int minProcesses = 1, int maxProcesses = 1, bool keepExistingNoProcesses = false, bool useHeartbeat = false, bool grantKillRequest = true, uint startupMonitorDelay = 20, bool active = true)
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ApplicationHandler"/> class using specified parameters.
+		/// </summary>
+		/// <param name="applicationName">The name of the application.</param>
+		/// <param name="applicationPath">The file system path to the application executable.</param>
+		/// <param name="nonResponsiveInterval">The interval defining non-responsive behavior.</param>
+		/// <param name="heartbeatInterval">The heartbeat check interval (default is 15 seconds).</param>
+		/// <param name="minProcesses">The minimum number of processes required (default is 1).</param>
+		/// <param name="maxProcesses">The maximum allowed processes (default is 1).</param>
+		/// <param name="keepExistingNoProcesses">Whether to maintain existing processes if none are running (default is false).</param>
+		/// <param name="useHeartbeat">Whether heartbeat monitoring is enabled (default is false).</param>
+		/// <param name="grantKillRequest">Whether process kill requests are permitted (default is true).</param>
+		/// <param name="startupMonitorDelay">The delay before starting process monitoring (default is 20 seconds).</param>
+		/// <param name="active">Specifies if the monitoring should be active immediately (default is true).</param>
+		public ApplicationHandler(string applicationName, string applicationPath, int nonResponsiveInterval, uint heartbeatInterval = 15,
+			int minProcesses = 1, int maxProcesses = 1, bool keepExistingNoProcesses = false, bool useHeartbeat = false,
+			bool grantKillRequest = true, uint startupMonitorDelay = 20, bool active = true)
 		{
 			Logger = LogManager.GetLogger("WatchdogServer");
 			ProcessHandlers = new List<ProcessHandler>();
@@ -48,6 +117,10 @@ namespace WatchdogLib
 			Active = active;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ApplicationHandler"/> class using a configuration object.
+		/// </summary>
+		/// <param name="applicationHandlerConfig">An object containing configuration settings for the application handler.</param>
 		public ApplicationHandler(ApplicationHandlerConfig applicationHandlerConfig)
 		{
 			Logger = LogManager.GetLogger("WatchdogServer");
@@ -56,6 +129,10 @@ namespace WatchdogLib
 			_heartbeatServer = HeartbeatServer.Instance;
 		}
 
+		/// <summary>
+		/// Updates the properties of this application handler using values from the given configuration.
+		/// </summary>
+		/// <param name="applicationHandlerConfig">The configuration object with updated settings.</param>
 		public void Set(ApplicationHandlerConfig applicationHandlerConfig)
 		{
 			ApplicationName = applicationHandlerConfig.ApplicationName;
@@ -88,7 +165,9 @@ namespace WatchdogLib
 		}
 
 
-
+		/// <summary>
+		/// Checks if no processes are running and starts a new process if needed.
+		/// </summary>
 		private void HandleProcessNotRunning()
 		{
 			var processes = Process.GetProcessesByName(ApplicationName);
@@ -107,7 +186,10 @@ namespace WatchdogLib
 				ProcessHandlers.Add(processHandler);
 			}
 		}
-
+		
+		/// <summary>
+		/// Iterates through monitored processes and handles those that have exited.
+		/// </summary>
 		private void HandleExitedProcesses()
 		{
 			for (int index = 0; index < ProcessHandlers.Count; index++)
@@ -211,6 +293,10 @@ namespace WatchdogLib
 			}
 		}
 
+		//If the MaxProcesses is reached this app will close all instances of the monitored application that are not being monitored
+		/// <summary>
+		/// Checks for duplicate running processes and terminates any duplicates that exceed the maximum allowed.
+		/// </summary>
 		public void HandleDuplicateProcesses()
 		{
 			//if (ProcessNo(ApplicationName) < MaxProcesses))
@@ -284,13 +370,22 @@ namespace WatchdogLib
 
 			}
 		}
-
+		
+		/// <summary>
+		/// Searches the list of process handlers for one corresponding to the specified process.
+		/// </summary>
+		/// <param name="process">The process to search for.</param>
+		/// <returns>The associated ProcessHandler if found; otherwise, null.</returns>
 		private ProcessHandler FindProcessHandler(Process process)
 		{
 			return ProcessHandlers.Find((processHander) => processHander.Process.Id == process.Id);
 		}
 
-
+		/// <summary>
+		/// Retrieves the number of currently running processes matching the application executable.
+		/// </summary>
+		/// <param name="applicationName">The application name (not directly used here).</param>
+		/// <returns>The count of running processes.</returns>
 		private int ProcessNo(string applicationName)
 		{
 			return Process.GetProcessesByName(applicationName).Length;

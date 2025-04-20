@@ -13,34 +13,57 @@ using Utilities;
 
 namespace WatchdogLib
 {
+	/// <summary>
+	/// Monitors and manages a set of application handlers as part of a watchdog system.
+	/// This class starts an asynchronous worker that periodically checks the health and status
+	/// of each monitored application.
+	/// </summary>
 	public class ApplicationWatcher
 	{
 		private readonly Stopwatch _sleepStopwatch;
 		private readonly Logger _logger;
 
 
-		//public List<ProcessHandler> ProcessHandlers { get; set; }
+		/// <summary>
+		/// Gets or sets the list of application handlers which are being monitored.
+		/// </summary>
 		public List<ApplicationHandler> ApplicationHandlers { get; set; }
 
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ApplicationWatcher"/> class using the provided logger.
+		/// An asynchronous monitoring job is started upon instantiation.
+		/// </summary>
 		public ApplicationWatcher(Logger logger)
 		{
-			//ProcessHandlers= new List<ProcessHandler>();
+			_logger = logger;
 			ApplicationHandlers = new List<ApplicationHandler>();
 			_sleepStopwatch = new Stopwatch();
 			var asyncWorkerMonitor = new AsyncWorker(MonitorJob) { Name = "ApplicationWatcher" };
 			asyncWorkerMonitor.Start();
-			_logger = logger;
-
 		}
 
+
+		/// <summary>
+		/// The monitoring job that is periodically executed.
+		/// This method iterates through the list of application handlers and invokes their Check() method.
+		/// </summary>
+		/// <returns>Always returns true after performing the monitoring cycle.</returns>
 		private bool MonitorJob()
 		{
+			try
+			{
+				_logger.Trace("Monitoring {0} applications.", ApplicationHandlers?.Count ?? 0);
 			// Walk through list of applications to see which ones are running
 			_sleepStopwatch.Restart();
-			foreach (var applicationHandler in ApplicationHandlers.ToArray())
+				foreach (var applicationHandler in ApplicationHandlers)
+				{
+					applicationHandler?.Check();
+				}
+			}
+			catch (Exception e)
 			{
-				applicationHandler.Check();
+				_logger.Error(e, "Exceptionn in MonitorJob " + e.Message);
+
 			}
 			Thread.Sleep(Math.Max(0, 500 - (int)_sleepStopwatch.ElapsedMilliseconds));
 			return true;
@@ -56,6 +79,11 @@ namespace WatchdogLib
 		}
 		*/
 
+		/// <summary>
+		/// Deserializes the configuration object and adds the corresponding application handlers
+		/// to the monitoring list.
+		/// </summary>
+		/// <param name="configuration">The configuration object containing ApplicationHandlerConfig entries.</param>
 		public void Deserialize(Configuration configuration)
 		{
 			foreach (var applicationHandlerConfig in configuration.ApplicationHandlers)

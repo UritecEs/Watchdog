@@ -13,7 +13,7 @@ namespace WatchdogLib
 			Name = name;
 			RequestKill = false;
 			LastHeartbeat = DateTime.Now;
-			LogManager.GetLogger("WatchdogServer");
+            //LogManager.GetLogger("WatchdogServer");
 
 		}
 		public string Name { get; set; }
@@ -114,7 +114,8 @@ namespace WatchdogLib
 					}
 					break;
 				default:
-					Debug.WriteLine("Unrecognized command");
+                    Logger.Error("Hearbeat Unrecognized command '" + message + "'");
+					//Debug.WriteLine("Unrecognized command");
 					break;
 			}
 		}
