@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Utilities;
 using WatchdogLib;
@@ -28,6 +29,10 @@ namespace WatchDog
 			_mainForm.buttonDeleteProcess.Click += ButtonDeleteProcessOnClick;
 			_mainForm.buttonEditProcess.Click += ButtonEditProcessClick;
 			//_mainForm.buttonRebootSettings.Click += ButtonRebootSettingsClick;
+
+			_mainForm.btnExitApp.Click += ButtonFinalizarClick;
+			_mainForm.btnPause.Click += ButtonPararClick;
+			_mainForm.btnContinue.Click += ButtonContinuarClick;
 
 			foreach (var applicationHandlerConfig in configuration.ApplicationHandlers)
 			{
@@ -97,6 +102,43 @@ namespace WatchDog
 			SelectMenuItemInList(Math.Max(0, i - 1));
 			if (i < _configuration.ApplicationHandlers.Count)
 				SetForm(_configuration.ApplicationHandlers[i]);
+
+		}
+
+		/// <summary>
+		/// Finalizar la aplicación
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ButtonFinalizarClick(object sender, EventArgs eventArgs)
+		{
+			Application.Exit();
+		}
+
+		/// <summary>
+		/// Parar monitornización de todas las apps
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ButtonPararClick(object sender, EventArgs eventArgs)
+		{
+			_applicationWatcher.Pausar();
+			_mainForm.btnContinue.Enabled = true;
+			_mainForm.btnPause.Enabled = false;
+			_mainForm.grpMonitoring.BackColor = Color.LightGray;
+		}
+
+		/// <summary>
+		/// Continuar la monitorización de todas las apps
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ButtonContinuarClick(object sender, EventArgs eventArgs)
+		{
+			_applicationWatcher.Continuar();
+			_mainForm.btnContinue.Enabled = false;
+			_mainForm.btnPause.Enabled = true;
+			_mainForm.grpMonitoring.BackColor = SystemColors.Control;
 		}
 
 		private void UpdateHandler()

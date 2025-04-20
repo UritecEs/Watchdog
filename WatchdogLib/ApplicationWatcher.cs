@@ -22,6 +22,7 @@ namespace WatchdogLib
 	{
 		private readonly Stopwatch _sleepStopwatch;
 		private readonly Logger _logger;
+		private readonly AsyncWorker asyncWorkerMonitor;
 
 
 		/// <summary>
@@ -38,8 +39,22 @@ namespace WatchdogLib
 			_logger = logger;
 			ApplicationHandlers = new List<ApplicationHandler>();
 			_sleepStopwatch = new Stopwatch();
-			var asyncWorkerMonitor = new AsyncWorker(MonitorJob) { Name = "ApplicationWatcher" };
-			asyncWorkerMonitor.Start();
+			asyncWorkerMonitor = new AsyncWorker(MonitorJob) { Name = "ApplicationWatcher" };
+			//asyncWorkerMonitor.Start();
+		}
+
+		public void Pausar()
+		{
+			if (asyncWorkerMonitor.IsRunning)
+				asyncWorkerMonitor.Suspend();
+		}
+
+		public void Continuar()
+		{
+			if (asyncWorkerMonitor.IsSuspended)
+				asyncWorkerMonitor.Resume();
+			else
+				asyncWorkerMonitor.Start();
 		}
 
 

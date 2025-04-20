@@ -38,24 +38,29 @@
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.buttonEditProcess = new System.Windows.Forms.Button();
 			this.buttonDeleteProcess = new System.Windows.Forms.Button();
+			this.grpMonitoring = new System.Windows.Forms.GroupBox();
+			this.btnExitApp = new System.Windows.Forms.Button();
+			this.btnContinue = new System.Windows.Forms.Button();
+			this.btnPause = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
+			this.grpMonitoring.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// listBoxMonitoredApplications
 			// 
-			this.listBoxMonitoredApplications.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-			| System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxMonitoredApplications.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.listBoxMonitoredApplications.FormattingEnabled = true;
 			this.listBoxMonitoredApplications.Location = new System.Drawing.Point(12, 4);
 			this.listBoxMonitoredApplications.Name = "listBoxMonitoredApplications";
-			this.listBoxMonitoredApplications.Size = new System.Drawing.Size(481, 108);
+			this.listBoxMonitoredApplications.Size = new System.Drawing.Size(481, 95);
 			this.listBoxMonitoredApplications.TabIndex = 0;
 			// 
 			// buttonAddProcess
 			// 
 			this.buttonAddProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.buttonAddProcess.Location = new System.Drawing.Point(12, 118);
+			this.buttonAddProcess.Location = new System.Drawing.Point(12, 104);
 			this.buttonAddProcess.Name = "buttonAddProcess";
 			this.buttonAddProcess.Size = new System.Drawing.Size(75, 23);
 			this.buttonAddProcess.TabIndex = 1;
@@ -82,8 +87,8 @@
 			// 
 			// textBoxApplicationPath
 			// 
-			this.textBoxApplicationPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxApplicationPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxApplicationPath.Enabled = false;
 			this.textBoxApplicationPath.Location = new System.Drawing.Point(62, 28);
 			this.textBoxApplicationPath.Name = "textBoxApplicationPath";
@@ -92,25 +97,25 @@
 			// 
 			// textBoxProcessName
 			// 
-			this.textBoxProcessName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxProcessName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxProcessName.Enabled = false;
 			this.textBoxProcessName.Location = new System.Drawing.Point(62, 58);
 			this.textBoxProcessName.Name = "textBoxProcessName";
-			this.textBoxProcessName.Size = new System.Drawing.Size(372, 20);
+			this.textBoxProcessName.Size = new System.Drawing.Size(175, 20);
 			this.textBoxProcessName.TabIndex = 3;
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.textBoxProcessName);
 			this.groupBox1.Controls.Add(this.textBoxApplicationPath);
 			this.groupBox1.Controls.Add(this.label2);
 			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Location = new System.Drawing.Point(12, 163);
+			this.groupBox1.Location = new System.Drawing.Point(12, 142);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(481, 103);
+			this.groupBox1.Size = new System.Drawing.Size(481, 88);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Application";
@@ -118,7 +123,7 @@
 			// buttonEditProcess
 			// 
 			this.buttonEditProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.buttonEditProcess.Location = new System.Drawing.Point(93, 118);
+			this.buttonEditProcess.Location = new System.Drawing.Point(93, 104);
 			this.buttonEditProcess.Name = "buttonEditProcess";
 			this.buttonEditProcess.Size = new System.Drawing.Size(75, 23);
 			this.buttonEditProcess.TabIndex = 3;
@@ -128,18 +133,59 @@
 			// buttonDeleteProcess
 			// 
 			this.buttonDeleteProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.buttonDeleteProcess.Location = new System.Drawing.Point(174, 118);
+			this.buttonDeleteProcess.Location = new System.Drawing.Point(174, 104);
 			this.buttonDeleteProcess.Name = "buttonDeleteProcess";
 			this.buttonDeleteProcess.Size = new System.Drawing.Size(75, 23);
 			this.buttonDeleteProcess.TabIndex = 4;
 			this.buttonDeleteProcess.Text = "Delete";
 			this.buttonDeleteProcess.UseVisualStyleBackColor = true;
 			// 
+			// grpMonitoring
+			// 
+			this.grpMonitoring.BackColor = System.Drawing.SystemColors.Control;
+			this.grpMonitoring.Controls.Add(this.btnExitApp);
+			this.grpMonitoring.Controls.Add(this.btnContinue);
+			this.grpMonitoring.Controls.Add(this.btnPause);
+			this.grpMonitoring.Location = new System.Drawing.Point(13, 243);
+			this.grpMonitoring.Name = "grpMonitoring";
+			this.grpMonitoring.Size = new System.Drawing.Size(479, 74);
+			this.grpMonitoring.TabIndex = 5;
+			this.grpMonitoring.TabStop = false;
+			this.grpMonitoring.Text = "Monitoring";
+			// 
+			// btnExitApp
+			// 
+			this.btnExitApp.Location = new System.Drawing.Point(384, 29);
+			this.btnExitApp.Name = "btnExitApp";
+			this.btnExitApp.Size = new System.Drawing.Size(75, 23);
+			this.btnExitApp.TabIndex = 3;
+			this.btnExitApp.Text = "Exit app";
+			this.btnExitApp.UseVisualStyleBackColor = true;
+			// 
+			// btnContinue
+			// 
+			this.btnContinue.Location = new System.Drawing.Point(104, 29);
+			this.btnContinue.Name = "btnContinue";
+			this.btnContinue.Size = new System.Drawing.Size(75, 23);
+			this.btnContinue.TabIndex = 1;
+			this.btnContinue.Text = "Continue";
+			this.btnContinue.UseVisualStyleBackColor = true;
+			// 
+			// btnPause
+			// 
+			this.btnPause.Location = new System.Drawing.Point(8, 29);
+			this.btnPause.Name = "btnPause";
+			this.btnPause.Size = new System.Drawing.Size(75, 23);
+			this.btnPause.TabIndex = 0;
+			this.btnPause.Text = "Pause";
+			this.btnPause.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(505, 323);
+			this.ClientSize = new System.Drawing.Size(505, 332);
+			this.Controls.Add(this.grpMonitoring);
 			this.Controls.Add(this.buttonDeleteProcess);
 			this.Controls.Add(this.buttonEditProcess);
 			this.Controls.Add(this.groupBox1);
@@ -153,6 +199,7 @@
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this.grpMonitoring.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -168,5 +215,9 @@
 		public System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Button buttonEditProcess;
 		public System.Windows.Forms.Button buttonDeleteProcess;
+		public System.Windows.Forms.GroupBox grpMonitoring;
+		public System.Windows.Forms.Button btnExitApp;
+		public System.Windows.Forms.Button btnContinue;
+		public System.Windows.Forms.Button btnPause;
 	}
 }
