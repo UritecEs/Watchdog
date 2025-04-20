@@ -47,14 +47,14 @@ namespace WatchdogLib
 		}
 
 
-
+		/*
 		public bool AddMonitoredApplication(string applicationName, string applicationPath, int nonResponsiveInterval, uint heartbeatInterval = 15, int minProcesses = 1, int maxProcesses = 1, bool keepExistingNoProcesses = false, bool useHeartbeat = false, bool grantKillRequest = true, bool active = false, uint startupMonitorDelay = 20)
 		{
 			_logger.Trace("Registering {0} for monitoring", applicationName);
-			ApplicationHandlers.Add(item: new ApplicationHandler(applicationName, applicationPath, nonResponsiveInterval, heartbeatInterval, minProcesses, maxProcesses, keepExistingNoProcesses, useHeartbeat, grantKillRequest, startupMonitorDelay) { Logger = _logger });
+			ApplicationHandlers.Add(new ApplicationHandler(applicationName, applicationPath, nonResponsiveInterval, heartbeatInterval, minProcesses, maxProcesses, keepExistingNoProcesses, useHeartbeat, grantKillRequest, startupMonitorDelay) { Logger = _logger });
 			return true; // todo
 		}
-
+		*/
 
 		public void Deserialize(Configuration configuration)
 		{

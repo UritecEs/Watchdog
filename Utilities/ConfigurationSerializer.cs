@@ -31,6 +31,11 @@ namespace Utilities
 				Formatting = Formatting.Indented
 			};
 		}
+
+		/// <summary>
+		/// Saves the configuration to disk
+		/// </summary>
+		/// <param name="configuration"></param>
 		public void Serialize(TConfig configuration)
 		{
 			using (var streamWriter = new StreamWriter(_fileName))
@@ -40,6 +45,10 @@ namespace Utilities
 			}
 		}
 
+		/// <summary>
+		/// Reads configuration data from disk
+		/// </summary>
+		/// <returns></returns>
 		public TConfig Deserialize()
 		{
 

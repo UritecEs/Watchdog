@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Diagnostics;
 using System.IO;
 using Utilities;
@@ -72,7 +73,10 @@ namespace WatchdogLib
 		{
 			get { return (Process == null) || Process.HasExited; }
 		}
-
+		
+		/// <summary>
+		/// Boolean that indicates if the process is responding.
+		/// </summary>
 		public bool Responding
 		{
 			get
@@ -102,15 +106,24 @@ namespace WatchdogLib
 			_fromStart = new Stopwatch();
 		}
 
-
-		public void CallExecutable(string executable, string args)
+		/// <summary>
+		/// Method to call an executable with the specified arguments.
+		/// </summary>
+		/// <param name="executable">Path of the executable</param>
+		/// <param name="args">Arguments for the executable</param>
+		public void CallExecutable(string executable, string args, Logger logger)
 		{
 			Args = args;
 			Executable = executable;
-			CallExecutable();
+			CallExecutable(logger);
 		}
 
-		public bool MonitorProcess(Process process)
+		/// <summary>
+		/// Method to monitor a process.
+		/// </summary>
+		/// <param name="process">The monitored process</param>
+		/// <returns>return true if an exception isn't catched</returns>
+		public bool MonitorProcess(Process process, Logger logger)
 		{
 			Process = process;
 			try
@@ -150,13 +163,19 @@ namespace WatchdogLib
 			Process = null;
 		}
 
-
-		public void CallExecutable()
+		/// <summary>
+		/// Method to call an executable with the atributes from the processHandler.
+		/// </summary>
+		public void CallExecutable(Logger logger)
 		{
 
-			if (!File.Exists(Executable)) return;
+			if (!File.Exists(Executable))
+			{
+				logger.Fatal("Error, ejecutable inexistente: " + Executable );
+				return;
+			}
 			var commandLine = Executable;
-			Trace.WriteLine("Running command: " + Executable + " " + Args);
+			logger.Error("Running command: " + Executable + " " + Args);
 			var psi = new ProcessStartInfo(commandLine)
 			{
 				UseShellExecute = false,

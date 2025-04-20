@@ -17,7 +17,10 @@ namespace WatchdogLib
 		public string ApplicationPath { get; set; }
 		public string ApplicationName { get; set; }
 		public bool UseHeartbeat { get; set; }
-		public Logger Logger { get; set; }
+		/// <summary>
+		/// Gets or sets the logger instance used to record messages for monitoring purposes.
+		/// </summary>
+		private Logger Logger { get; set; }
 		public bool GrantKillRequest { get; set; }
 		public uint HeartbeatInterval { get; set; }
 		public int MaxProcesses { get; set; }
@@ -51,7 +54,6 @@ namespace WatchdogLib
 			ProcessHandlers = new List<ProcessHandler>();
 			Set(applicationHandlerConfig);
 			_heartbeatServer = HeartbeatServer.Instance;
-			;
 		}
 
 		public void Set(ApplicationHandlerConfig applicationHandlerConfig)
@@ -69,7 +71,11 @@ namespace WatchdogLib
 			StartupMonitorDelay = applicationHandlerConfig.StartupMonitorDelay;
 			Active = applicationHandlerConfig.Active;
 		}
-
+		
+		/// <summary>
+		/// Performs periodic checks on the monitored processes to ensure they are running, responsive,
+		/// and within the allowed process count limits.
+		/// </summary>
 		public void Check()
 		{
 			if (!Active) return;
@@ -97,7 +103,7 @@ namespace WatchdogLib
 					StartingInterval = StartupMonitorDelay
 				};
 				Logger.Info("No process of application {0} is running, so one will be started", ApplicationName);
-				processHandler.CallExecutable(ApplicationPath, "");
+				processHandler.CallExecutable(ApplicationPath, "", Logger);
 				ProcessHandlers.Add(processHandler);
 			}
 		}
@@ -120,7 +126,7 @@ namespace WatchdogLib
 					{
 						if (notEnoughProcesses) Logger.Info("Process {0} has exited and no others are running, so start new", processHandler.Name);
 						if (lessProcessesThanBefore) Logger.Info("Process {0} has exited, and number of processed needs to maintained , so start new", processHandler.Name);
-						processHandler.CallExecutable();
+						processHandler.CallExecutable(Logger);
 					}
 					else
 					{
@@ -131,24 +137,27 @@ namespace WatchdogLib
 			}
 		}
 
-
-
-
-
-
+		/// <summary>
+		/// Checks each monitored process for non-responsiveness using heartbeat signals and response intervals.
+		/// If a process is non-responsive or a kill request has been issued, the process is terminated.
+		/// </summary>
 		private void HandleNonResponsiveProcesses()
 		{
 			for (var index = 0; index < ProcessHandlers.Count; index++)
 			{
 				var processHandler = ProcessHandlers[index];
 
+				// Skip processes that have already exited.
 				if (processHandler.HasExited) continue; // We will deal with this later
+														
+				// If still in startup phase, skip checking.
 				if (processHandler.IsStarting)
 				{
 					//Logger.Info("Process {0} is still in startup phase, no checking is being performed", processHandler.Name);
 					Debug.WriteLine("Process {0} is still in startup phase, no checking is being performed", processHandler.Name);
 					continue; // Is still starting up, so ignore
 				}
+				// Check heartbeat soft limit.
 				if (_heartbeatServer.HeartbeatTimedOut(processHandler.Name, HeartbeatInterval / 2) && UseHeartbeat)
 				{
 					//todo: add throttling
@@ -185,7 +194,7 @@ namespace WatchdogLib
 						//if ((ProcessNo(processHandler.Name) == 0) || (ProcessNo(processHandler.Name) > 0) && (KeepExistingNoProcesses && !EnsureSingleProcess))
 						if (notEnoughProcesses || lessProcessesThanBefore)
 						{
-							processHandler.CallExecutable();
+							processHandler.CallExecutable(Logger);
 						}
 						else
 						{
@@ -287,6 +296,10 @@ namespace WatchdogLib
 			return Process.GetProcessesByName(applicationName).Length;
 		}
 
+		/// <summary>
+		/// Monitors any running processes that are currently not being tracked.
+		/// </summary>
+		/// <returns>Returns true if the unmonitored processes are handled successfully.</returns>
 		public bool HandleUnmonitoredProcesses()
 		{
 			try
@@ -296,13 +309,13 @@ namespace WatchdogLib
 				{
 					if (ProcessHandlers.All(procHandle => procHandle.Process == null || procHandle.Process.Id != process.Id))
 					{
-						// This process o
+						// Begin monitoring the process if it is not already tracked.
 						var processHandler = new ProcessHandler
 						{
 							WaitForExit = false,
 							NonResponsiveInterval = NonResponsiveInterval,
 						};
-						processHandler.MonitorProcess(process);
+						processHandler.MonitorProcess(process, Logger);
 						ProcessHandlers.Add(processHandler);
 					}
 

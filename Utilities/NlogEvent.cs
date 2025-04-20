@@ -56,7 +56,7 @@ namespace Utilities
 
 			var config = LogManager.Configuration;
 			config.AddTarget("nlogEvent", nlogEventTarget);
-			var rule = new LoggingRule("*", LogLevel.Trace, nlogEventTarget);
+            var rule = new LoggingRule("*", LogLevel.Debug, nlogEventTarget);
 			config.LoggingRules.Add(rule);
 
 			LogManager.Configuration = config;
