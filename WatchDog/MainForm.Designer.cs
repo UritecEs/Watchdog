@@ -38,7 +38,6 @@
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.buttonEditProcess = new System.Windows.Forms.Button();
 			this.buttonDeleteProcess = new System.Windows.Forms.Button();
-			this.buttonRebootSettings = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -136,26 +135,17 @@
 			this.buttonDeleteProcess.Text = "Delete";
 			this.buttonDeleteProcess.UseVisualStyleBackColor = true;
 			// 
-			// buttonRebootSettings
-			// 
-			this.buttonRebootSettings.Location = new System.Drawing.Point(382, 283);
-			this.buttonRebootSettings.Name = "buttonRebootSettings";
-			this.buttonRebootSettings.Size = new System.Drawing.Size(111, 28);
-			this.buttonRebootSettings.TabIndex = 26;
-			this.buttonRebootSettings.Text = "Reboot settings";
-			this.buttonRebootSettings.UseVisualStyleBackColor = true;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(505, 323);
-			this.Controls.Add(this.buttonRebootSettings);
 			this.Controls.Add(this.buttonDeleteProcess);
 			this.Controls.Add(this.buttonEditProcess);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.buttonAddProcess);
 			this.Controls.Add(this.listBoxMonitoredApplications);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
@@ -178,6 +168,5 @@
 		public System.Windows.Forms.GroupBox groupBox1;
 		public System.Windows.Forms.Button buttonEditProcess;
 		public System.Windows.Forms.Button buttonDeleteProcess;
-		public System.Windows.Forms.Button buttonRebootSettings;
 	}
 }

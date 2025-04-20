@@ -27,7 +27,7 @@ namespace WatchDog
 			_mainForm.buttonAddProcess.Click += ButtonAddProcessClick;
 			_mainForm.buttonDeleteProcess.Click += ButtonDeleteProcessOnClick;
 			_mainForm.buttonEditProcess.Click += ButtonEditProcessClick;
-			_mainForm.buttonRebootSettings.Click += ButtonRebootSettingsClick;
+			//_mainForm.buttonRebootSettings.Click += ButtonRebootSettingsClick;
 
 			foreach (var applicationHandlerConfig in configuration.ApplicationHandlers)
 			{
