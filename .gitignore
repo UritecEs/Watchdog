@@ -215,15 +215,3 @@ FakesAssemblies/
 **/*.Server/GeneratedArtifacts
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
-
-
-# Uriges
-/bin
-/App_Data
-/docs
-/-*
-Web\.config
-*.exclude
-Thumbs.db
-/vwd.webinfo
-/pruebaCorreo.aspx
