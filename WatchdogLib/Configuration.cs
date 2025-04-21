@@ -60,6 +60,7 @@ namespace WatchdogLib
 
 	public class ApplicationHandlerConfig
 	{
+        public Guid Id { get; set; }
 		public int NonResponsiveInterval { get; set; }
 		public string ApplicationPath { get; set; }
 		public string ApplicationName { get; set; }
@@ -76,6 +77,7 @@ namespace WatchdogLib
 
 		public ApplicationHandlerConfig()
 		{
+            Id = Guid.NewGuid();    
 			NonResponsiveInterval = 20;
 			ApplicationPath = "";
 			ApplicationName = "";

@@ -63,6 +63,7 @@ namespace WatchDog
 			_mainForm.listBoxMonitoredApplications.Items.Add(applicationHandlerConfig.ApplicationName);
 			SelectMenuItemInList(_mainForm.listBoxMonitoredApplications.Items.Count - 1);
 			SetForm(applicationHandlerConfig);
+			_applicationWatcher.Add(applicationHandlerConfig);
 		}
 
 		private void ButtonEditProcessClick(object sender, EventArgs e)
@@ -77,31 +78,34 @@ namespace WatchDog
 
 			var editForm = new EditForm();
 			var editFormVm = new EditFormVm(editForm, applicationHandlerConfig);
-			editForm.ShowDialog(_mainForm);
+			var result = editForm.ShowDialog(_mainForm);
+			if (result != DialogResult.OK)
+				return;
 
 			_serializer.Serialize(_configuration);
 			SetForm(applicationHandlerConfig);
 			_mainForm.listBoxMonitoredApplications.Items[i] = _selectedItem.ApplicationName;
+			_applicationWatcher.Update(applicationHandlerConfig);
 		}
 
 		private void ButtonDeleteProcessOnClick(object sender, EventArgs eventArgs)
 		{
 			var i = _mainForm.listBoxMonitoredApplications.SelectedIndex;
-
 			if (i < 0)
 			{
 				MessageBox.Show("Please, select an element to remove.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
+			_applicationWatcher.Remove(_configuration.ApplicationHandlers[i]);
+
 			_mainForm.listBoxMonitoredApplications.Items.RemoveAt(i);
 			_configuration.ApplicationHandlers.RemoveAt(i);
 			_serializer.Serialize(_configuration);
 
-			i = Math.Max(0, i - 1);
-
 			if (_configuration.ApplicationHandlers.Count > 0)
 			{
+				i = Math.Max(0, i - 1);
 				SelectMenuItemInList(i);
 				SetForm(_configuration.ApplicationHandlers[i]);
 			}

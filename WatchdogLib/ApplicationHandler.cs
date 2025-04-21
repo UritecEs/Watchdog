@@ -13,11 +13,16 @@ namespace WatchdogLib
 	/// handling duplicate and exited processes, and ensuring that the number of processes
 	/// stays within predefined minimum and maximum limits.
 	/// </summary>
-	public class ApplicationHandler
+	public class ApplicationHandler : IEquatable<ApplicationHandler>
 	{
 		private readonly HeartbeatServer _heartbeatServer;
 		//private ApplicationHandlerConfig _applicationHandlerConfig;
 
+		/// <summary>
+		/// Gets the unique identifier for this ApplicationHandler instance.
+		/// </summary>
+		public Guid Id { get; private set; }
+		
 		/// <summary>
 		/// Gets or sets the list of process handlers monitoring the application processes.
 		/// </summary>
@@ -100,6 +105,7 @@ namespace WatchdogLib
 			int minProcesses = 1, int maxProcesses = 1, bool keepExistingNoProcesses = false, bool useHeartbeat = false,
 			bool grantKillRequest = true, uint startupMonitorDelay = 20, bool active = true)
 		{
+			Id = Guid.NewGuid();
 			Logger = LogManager.GetLogger("WatchdogServer");
 			ProcessHandlers = new List<ProcessHandler>();
 			ApplicationName = applicationName;
@@ -123,6 +129,7 @@ namespace WatchdogLib
 		/// <param name="applicationHandlerConfig">An object containing configuration settings for the application handler.</param>
 		public ApplicationHandler(ApplicationHandlerConfig applicationHandlerConfig)
 		{
+			Id = applicationHandlerConfig.Id;
 			Logger = LogManager.GetLogger("WatchdogServer");
 			ProcessHandlers = new List<ProcessHandler>();
 			Set(applicationHandlerConfig);
@@ -135,6 +142,7 @@ namespace WatchdogLib
 		/// <param name="applicationHandlerConfig">The configuration object with updated settings.</param>
 		public void Set(ApplicationHandlerConfig applicationHandlerConfig)
 		{
+			Id = applicationHandlerConfig.Id;
 			ApplicationName = applicationHandlerConfig.ApplicationName;
 			ApplicationPath = applicationHandlerConfig.ApplicationPath;
 			NonResponsiveInterval = applicationHandlerConfig.NonResponsiveInterval;
@@ -425,7 +433,38 @@ namespace WatchdogLib
 
 			return true;
 		}
+				
+		/// <summary>
+		/// Determines whether this ApplicationHandler instance is equal to another instance by comparing their unique identifiers.
+		/// </summary>
+		/// <param name="other">Another instance of ApplicationHandler.</param>
+		/// <returns>True if both instances share the same identifier; otherwise, false.</returns>
+		public bool Equals(ApplicationHandler other)
+		{
+			return Id.Equals(other.Id);
+		}
 
+		/// <summary>
+		/// Updates the configuration of an existing ApplicationHandler
+		/// </summary>
+		/// <param name="config"></param>
+		public void UpdateConfiguration(ApplicationHandlerConfig config)
+		{
+			ApplicationPath = config.ApplicationPath;
+			ApplicationName = config.ApplicationName;
+			NonResponsiveInterval = config.NonResponsiveInterval;
+			UseHeartbeat = config.UseHeartbeat;
+			HeartbeatInterval = config.HeartbeatInterval;
+			StartupMonitorDelay = config.StartupMonitorDelay;
+			Active = config.Active;
 
+			// Update the `NonResponsiveInterval` of each ProcessHandler to match the new configuration.
+			foreach (var processHandler in ProcessHandlers)
+			{
+				processHandler.NonResponsiveInterval = NonResponsiveInterval;
+				processHandler.StartingInterval = StartupMonitorDelay;
+			}
+
+		}
 	}
 }

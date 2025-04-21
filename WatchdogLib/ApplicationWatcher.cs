@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using NLog;
 using Utilities;
@@ -68,8 +69,8 @@ namespace WatchdogLib
 			try
 			{
 				_logger.Trace("Monitoring {0} applications.", ApplicationHandlers?.Count ?? 0);
-			// Walk through list of applications to see which ones are running
-			_sleepStopwatch.Restart();
+				// Walk through list of applications to see which ones are running
+				_sleepStopwatch.Restart();
 				foreach (var applicationHandler in ApplicationHandlers)
 				{
 					applicationHandler?.Check();
@@ -105,6 +106,40 @@ namespace WatchdogLib
 			{
 				var applicationHandler = new ApplicationHandler(applicationHandlerConfig);
 				ApplicationHandlers.Add(applicationHandler);
+			}
+		}
+
+		/// <summary>
+		/// Adds a new ApplicationHandler based on the provided `Configuration`.
+		/// </summary>
+		/// <param name="configuration">The configuration object containing the updated list of `ApplicationHandlerConfig` objects.</param>
+		public void Add(ApplicationHandlerConfig applicationHandlerConfig)
+		{
+			ApplicationHandlers.Add(new ApplicationHandler(applicationHandlerConfig));
+		}
+
+		/// <summary>
+		/// Updates one `ApplicationHandler` based on the provided `Configuration`.
+		/// </summary>
+		/// <param name="configuration">The configuration object containing the updated list of `ApplicationHandlerConfig` objects.</param>
+		public void Update(ApplicationHandlerConfig applicationHandlerConfig)
+		{
+			ApplicationHandlers
+				.Find(app => app.Id == applicationHandlerConfig.Id)
+				.UpdateConfiguration(applicationHandlerConfig);
+		}
+
+		/// <summary>
+		/// Removes an existing application handler
+		/// </summary>
+		/// <param name="applicationHandlerConfig"></param>
+		public void Remove(ApplicationHandlerConfig applicationHandlerConfig)
+		{
+			var appId = applicationHandlerConfig.Id;
+			var appHandler = ApplicationHandlers.FirstOrDefault(app => app.Id == appId);
+			if (appHandler != null && appHandler.Id == appId)
+			{
+				ApplicationHandlers.Remove(appHandler);
 			}
 		}
 	}
