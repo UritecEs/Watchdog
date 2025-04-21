@@ -35,14 +35,16 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.textBoxApplicationPath = new System.Windows.Forms.TextBox();
 			this.textBoxProcessName = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.grpAplicacion = new System.Windows.Forms.GroupBox();
 			this.buttonEditProcess = new System.Windows.Forms.Button();
 			this.buttonDeleteProcess = new System.Windows.Forms.Button();
 			this.grpMonitoring = new System.Windows.Forms.GroupBox();
 			this.btnExitApp = new System.Windows.Forms.Button();
 			this.btnContinue = new System.Windows.Forms.Button();
 			this.btnPause = new System.Windows.Forms.Button();
-			this.groupBox1.SuspendLayout();
+			this.lblHearbeat = new System.Windows.Forms.Label();
+			this.lblLastHeartbeat = new System.Windows.Forms.Label();
+			this.grpAplicacion.SuspendLayout();
 			this.grpMonitoring.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -105,20 +107,22 @@
 			this.textBoxProcessName.Size = new System.Drawing.Size(175, 20);
 			this.textBoxProcessName.TabIndex = 3;
 			// 
-			// groupBox1
+			// grpAplicacion
 			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.grpAplicacion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.textBoxProcessName);
-			this.groupBox1.Controls.Add(this.textBoxApplicationPath);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Location = new System.Drawing.Point(12, 142);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(481, 88);
-			this.groupBox1.TabIndex = 2;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Application";
+			this.grpAplicacion.Controls.Add(this.lblLastHeartbeat);
+			this.grpAplicacion.Controls.Add(this.lblHearbeat);
+			this.grpAplicacion.Controls.Add(this.textBoxProcessName);
+			this.grpAplicacion.Controls.Add(this.textBoxApplicationPath);
+			this.grpAplicacion.Controls.Add(this.label2);
+			this.grpAplicacion.Controls.Add(this.label1);
+			this.grpAplicacion.Location = new System.Drawing.Point(12, 142);
+			this.grpAplicacion.Name = "grpAplicacion";
+			this.grpAplicacion.Size = new System.Drawing.Size(481, 88);
+			this.grpAplicacion.TabIndex = 2;
+			this.grpAplicacion.TabStop = false;
+			this.grpAplicacion.Text = "Application";
 			// 
 			// buttonEditProcess
 			// 
@@ -180,6 +184,24 @@
 			this.btnPause.Text = "Pause";
 			this.btnPause.UseVisualStyleBackColor = true;
 			// 
+			// lblHearbeat
+			// 
+			this.lblHearbeat.AutoSize = true;
+			this.lblHearbeat.Location = new System.Drawing.Point(254, 61);
+			this.lblHearbeat.Name = "lblHearbeat";
+			this.lblHearbeat.Size = new System.Drawing.Size(54, 13);
+			this.lblHearbeat.TabIndex = 4;
+			this.lblHearbeat.Text = "Heartbeat";
+			// 
+			// lblLastHeartbeat
+			// 
+			this.lblLastHeartbeat.AutoSize = true;
+			this.lblLastHeartbeat.Location = new System.Drawing.Point(314, 61);
+			this.lblLastHeartbeat.Name = "lblLastHeartbeat";
+			this.lblLastHeartbeat.Size = new System.Drawing.Size(35, 13);
+			this.lblLastHeartbeat.TabIndex = 5;
+			this.lblLastHeartbeat.Text = "label3";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,7 +210,7 @@
 			this.Controls.Add(this.grpMonitoring);
 			this.Controls.Add(this.buttonDeleteProcess);
 			this.Controls.Add(this.buttonEditProcess);
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.grpAplicacion);
 			this.Controls.Add(this.buttonAddProcess);
 			this.Controls.Add(this.listBoxMonitoredApplications);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -197,8 +219,8 @@
 			this.Name = "MainForm";
 			this.Text = "Watchdog";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
+			this.grpAplicacion.ResumeLayout(false);
+			this.grpAplicacion.PerformLayout();
 			this.grpMonitoring.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -212,12 +234,14 @@
 		public System.Windows.Forms.Label label2;
 		public System.Windows.Forms.TextBox textBoxApplicationPath;
 		public System.Windows.Forms.TextBox textBoxProcessName;
-		public System.Windows.Forms.GroupBox groupBox1;
+        public System.Windows.Forms.GroupBox grpAplicacion;
 		public System.Windows.Forms.Button buttonEditProcess;
 		public System.Windows.Forms.Button buttonDeleteProcess;
 		public System.Windows.Forms.GroupBox grpMonitoring;
 		public System.Windows.Forms.Button btnExitApp;
 		public System.Windows.Forms.Button btnContinue;
 		public System.Windows.Forms.Button btnPause;
+		public System.Windows.Forms.Label lblHearbeat;
+		public System.Windows.Forms.Label lblLastHeartbeat;
 	}
 }

@@ -39,6 +39,27 @@ namespace WatchDog
 				_mainForm.listBoxMonitoredApplications.Items.Add(applicationHandlerConfig.ApplicationName);
 			}
 			SelectMenuItemInList(0);
+
+			applicationWatcher.HeartbeatEvent += ApplicationWatcherOnHeartbeat;
+		}
+
+		private void ApplicationWatcherOnHeartbeat(object sender, EventArgs e)
+		{
+			_mainForm.Invoke(new MethodInvoker(delegate
+			{
+
+				var i = _mainForm.listBoxMonitoredApplications.SelectedIndex;
+				if (i < 0)
+					return;
+
+				var selectedApplication = _configuration.ApplicationHandlers[i];
+
+				var app = (ApplicationHandler)sender;
+				if (app.Id != selectedApplication.Id)
+					return;
+
+				_mainForm.lblLastHeartbeat.Text = DateTime.Now.ToString("HH:mm:ss");
+			}));
 		}
 
 		private void ButtonRebootSettingsClick(object sender, EventArgs e)
@@ -240,8 +261,19 @@ namespace WatchDog
 			_mainForm.textBoxApplicationPath.Text = applicationHandlerConfig.ApplicationPath;
 
 			_mainForm.listBoxMonitoredApplications.SelectedItem = applicationHandlerConfig.ApplicationName;
+			_mainForm.grpAplicacion.BackColor = applicationHandlerConfig.Active ? SystemColors.Control : Color.LightGray;
 
-
+			if (applicationHandlerConfig.UseHeartbeat && applicationHandlerConfig.Active)
+			{
+				_mainForm.lblHearbeat.Visible = true;
+				_mainForm.lblLastHeartbeat.Visible = true;
+				_mainForm.lblLastHeartbeat.Text = "";
+			}
+			else
+			{
+				_mainForm.lblHearbeat.Visible = false;
+				_mainForm.lblLastHeartbeat.Visible = false;
+			}
 		}
 
 		private bool SettingsSame(ApplicationHandlerConfig applicationHandlerConfig)

@@ -13,7 +13,7 @@ namespace WatchdogLib
 			Name = name;
 			RequestKill = false;
 			LastHeartbeat = DateTime.Now;
-            //LogManager.GetLogger("WatchdogServer");
+			//LogManager.GetLogger("WatchdogServer");
 
 		}
 		public string Name { get; set; }
@@ -55,6 +55,11 @@ namespace WatchdogLib
 			}
 		}
 
+		/// <summary>
+		/// Fires when a new heartbeat is received. Params: object == hearbeatClient
+		/// </summary>
+		public EventHandler HeartbeatEvent;
+
 		public Logger Logger { get; set; }
 
 		private HeartbeatServer()
@@ -74,50 +79,60 @@ namespace WatchdogLib
 		{
 			var args = message.Split(',');
 			if (args.Length == 0) return;
-			uint command; if (!uint.TryParse(args[0], out command)) return;
+			if (!uint.TryParse(args[0], out uint command)) return;
 
-			switch (command)
+			try
 			{
-
-				case (int)Commands.Heartbeat:
-					{
-						var client = FindByName(connection.Name);
-						if (client == null) break;
-						if (args.Length < 2) return;
-							client.ProcessId = Convert.ToInt32(args[1]);
-						client.LastHeartbeat = DateTime.Now;
-						Debug.WriteLine("received heartbeat");
-					}
-					break;
-				case (int)Commands.RequestKill:
-					{
-						var client = FindByName(connection.Name);
-						if (client == null) break;
-						if (args.Length < 2) return;
-							client.ProcessId = Convert.ToInt32(args[1]);
-
-						if (args.Length == 3)
+				switch (command)
+				{
+					case (int)Commands.Heartbeat:
 						{
-							uint delay;
-							if (!uint.TryParse(args[2], out delay)) return;
-							client.KillTime = DateTime.Now + TimeSpan.FromSeconds(delay);
+							var client = FindByName(connection.Name);
+							if (client == null) break;
+							if (args.Length < 2) return;
+							client.ProcessId = Convert.ToInt32(args[1]);
+							client.LastHeartbeat = DateTime.Now;
+							Debug.WriteLine("received heartbeat");
+							HeartbeatEvent?.Invoke(client, null);
+						}
+						break;
+
+					case (int)Commands.RequestKill:
+						{
+							var client = FindByName(connection.Name);
+							if (client == null) break;
+							if (args.Length < 2) return;
+							client.ProcessId = Convert.ToInt32(args[1]);
+
+							if (args.Length == 3)
+							{
+								uint delay;
+								if (!uint.TryParse(args[2], out delay)) return;
+								client.KillTime = DateTime.Now + TimeSpan.FromSeconds(delay);
 								Logger.Warn("Received kill after {0} seconds request by Process {1}", delay, client.ProcessId);
-							//Debug.WriteLine("received delayed kill");
-						}
-						else
-						{
-							client.KillTime = DateTime.Now;
+								//Debug.WriteLine("received delayed kill");
+							}
+							else
+							{
+								client.KillTime = DateTime.Now;
 								Logger.Warn("Received kill request by Process {0}", client.ProcessId);
-							//Debug.WriteLine("received  kill");
+								//Debug.WriteLine("received  kill");
+							}
+							client.RequestKill = true;
 						}
-						client.RequestKill = true;
-					}
-					break;
-				default:
-                    Logger.Error("Hearbeat Unrecognized command '" + message + "'");
-					//Debug.WriteLine("Unrecognized command");
-					break;
+						break;
+
+					default:
+						Logger.Error("Hearbeat Unrecognized command '" + message + "'");
+						//Debug.WriteLine("Unrecognized command");
+						break;
+				}
 			}
+			catch (Exception e)
+			{
+				Logger.Fatal(e, "Exception in Heartbeat " + e.Message);
+			}
+
 		}
 
 		private void OnClientConnected(NamedPipeConnection<string, string> connection)
