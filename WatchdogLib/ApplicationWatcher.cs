@@ -169,7 +169,7 @@ namespace WatchdogLib
 		{
 			ApplicationHandlers
 				.Find(app => app.Id == applicationHandlerConfig.Id)
-				.UpdateConfiguration(applicationHandlerConfig);
+				.SetConfiguration(applicationHandlerConfig);
 		}
 
 		/// <summary>

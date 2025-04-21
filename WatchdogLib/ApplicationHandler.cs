@@ -29,7 +29,7 @@ namespace WatchdogLib
 		private List<ProcessHandler> ProcessHandlers { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the time interval used to decide when a process is considered non-responsive.
+		/// Gets or sets the time interval (in ms) used to decide when a process is considered non-responsive.
 		/// </summary>
 		public int NonResponsiveInterval { get; set; }
 		
@@ -83,10 +83,10 @@ namespace WatchdogLib
 		public bool KeepExistingNoProcesses { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the delay (in seconds) to wait after startup before beginning process monitoring.
+		/// Gets or sets the delay (in ms) to wait after startup before beginning process monitoring.
 		/// </summary>
 		public uint StartupMonitorDelay { get; set; }
-
+		/*
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ApplicationHandler"/> class using specified parameters.
 		/// </summary>
@@ -110,19 +110,19 @@ namespace WatchdogLib
 			ProcessHandlers = new List<ProcessHandler>();
 			ApplicationName = applicationName;
 			ApplicationPath = applicationPath;
-			NonResponsiveInterval = nonResponsiveInterval;
+			NonResponsiveInterval = nonResponsiveInterval * 1000;
 			HeartbeatInterval = heartbeatInterval;
 			MinProcesses = minProcesses;
 			MaxProcesses = maxProcesses;
 			KeepExistingNoProcesses = keepExistingNoProcesses;
 			UseHeartbeat = useHeartbeat;
 			GrantKillRequest = grantKillRequest;
-			StartupMonitorDelay = startupMonitorDelay;
+			StartupMonitorDelay = startupMonitorDelay * 1000;
 
 			_heartbeatServer = HeartbeatServer.Instance;
 			Active = active;
 		}
-
+		*/
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ApplicationHandler"/> class using a configuration object.
 		/// </summary>
@@ -132,7 +132,7 @@ namespace WatchdogLib
 			Id = applicationHandlerConfig.Id;
 			Logger = LogManager.GetLogger("WatchdogServer");
 			ProcessHandlers = new List<ProcessHandler>();
-			Set(applicationHandlerConfig);
+			SetConfiguration(applicationHandlerConfig);
 			_heartbeatServer = HeartbeatServer.Instance;
 		}
 
@@ -140,12 +140,12 @@ namespace WatchdogLib
 		/// Updates the properties of this application handler using values from the given configuration.
 		/// </summary>
 		/// <param name="applicationHandlerConfig">The configuration object with updated settings.</param>
-		public void Set(ApplicationHandlerConfig applicationHandlerConfig)
+		public void SetConfiguration(ApplicationHandlerConfig applicationHandlerConfig)
 		{
 			Id = applicationHandlerConfig.Id;
 			ApplicationName = applicationHandlerConfig.ApplicationName;
 			ApplicationPath = applicationHandlerConfig.ApplicationPath;
-			NonResponsiveInterval = applicationHandlerConfig.NonResponsiveInterval;
+			NonResponsiveInterval = applicationHandlerConfig.NonResponsiveInterval * 1000;
 			HeartbeatInterval = applicationHandlerConfig.HeartbeatInterval;
 			MinProcesses = applicationHandlerConfig.MinProcesses;
 			MaxProcesses = applicationHandlerConfig.MaxProcesses;
@@ -153,10 +153,17 @@ namespace WatchdogLib
 			UseHeartbeat = applicationHandlerConfig.UseHeartbeat;
 			GrantKillRequest = applicationHandlerConfig.GrantKillRequest;
 			Active = applicationHandlerConfig.Active;
-			StartupMonitorDelay = applicationHandlerConfig.StartupMonitorDelay;
+			StartupMonitorDelay = applicationHandlerConfig.StartupMonitorDelay * 1000;
 			Active = applicationHandlerConfig.Active;
+
+			// Update the `NonResponsiveInterval` of each ProcessHandler to match the new configuration.
+			foreach (var processHandler in ProcessHandlers)
+			{
+				processHandler.NonResponsiveInterval = NonResponsiveInterval;
+				processHandler.StartingInterval = StartupMonitorDelay;
+			}
 		}
-		
+
 		/// <summary>
 		/// Performs periodic checks on the monitored processes to ensure they are running, responsive,
 		/// and within the allowed process count limits.
@@ -171,7 +178,6 @@ namespace WatchdogLib
 			HandleUnmonitoredProcesses();
 			HandleProcessNotRunning();
 		}
-
 
 		/// <summary>
 		/// Checks if no processes are running and starts a new process if needed.
@@ -442,29 +448,6 @@ namespace WatchdogLib
 		public bool Equals(ApplicationHandler other)
 		{
 			return Id.Equals(other.Id);
-		}
-
-		/// <summary>
-		/// Updates the configuration of an existing ApplicationHandler
-		/// </summary>
-		/// <param name="config"></param>
-		public void UpdateConfiguration(ApplicationHandlerConfig config)
-		{
-			ApplicationPath = config.ApplicationPath;
-			ApplicationName = config.ApplicationName;
-			NonResponsiveInterval = config.NonResponsiveInterval;
-			UseHeartbeat = config.UseHeartbeat;
-			HeartbeatInterval = config.HeartbeatInterval;
-			StartupMonitorDelay = config.StartupMonitorDelay;
-			Active = config.Active;
-
-			// Update the `NonResponsiveInterval` of each ProcessHandler to match the new configuration.
-			foreach (var processHandler in ProcessHandlers)
-			{
-				processHandler.NonResponsiveInterval = NonResponsiveInterval;
-				processHandler.StartingInterval = StartupMonitorDelay;
-			}
-
 		}
 
 		/// <summary>
