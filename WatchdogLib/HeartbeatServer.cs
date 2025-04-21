@@ -17,7 +17,7 @@ namespace WatchdogLib
 
 		}
 		public string Name { get; set; }
-		public string ProcessName { get; set; }
+		public int ProcessId { get; set; }
 		public DateTime LastHeartbeat { get; set; }
 		public bool RequestKill { get; set; }
 		public DateTime KillTime { get; set; }
@@ -84,7 +84,7 @@ namespace WatchdogLib
 						var client = FindByName(connection.Name);
 						if (client == null) break;
 						if (args.Length < 2) return;
-						client.ProcessName = args[1];
+							client.ProcessId = Convert.ToInt32(args[1]);
 						client.LastHeartbeat = DateTime.Now;
 						Debug.WriteLine("received heartbeat");
 					}
@@ -94,20 +94,20 @@ namespace WatchdogLib
 						var client = FindByName(connection.Name);
 						if (client == null) break;
 						if (args.Length < 2) return;
-						client.ProcessName = args[1];
+							client.ProcessId = Convert.ToInt32(args[1]);
 
 						if (args.Length == 3)
 						{
 							uint delay;
 							if (!uint.TryParse(args[2], out delay)) return;
 							client.KillTime = DateTime.Now + TimeSpan.FromSeconds(delay);
-							Logger.Warn("Received kill after {0} seconds request by Process {1}", delay, client.ProcessName);
+								Logger.Warn("Received kill after {0} seconds request by Process {1}", delay, client.ProcessId);
 							//Debug.WriteLine("received delayed kill");
 						}
 						else
 						{
 							client.KillTime = DateTime.Now;
-							Logger.Warn("Received kill request by Process {0}", client.ProcessName);
+								Logger.Warn("Received kill request by Process {0}", client.ProcessId);
 							//Debug.WriteLine("received  kill");
 						}
 						client.RequestKill = true;
@@ -140,9 +140,9 @@ namespace WatchdogLib
 			return _clients.FirstOrDefault((client) => client.Name == name);
 		}
 
-		public HeartbeatClient FindByProcessName(string processName)
+		public HeartbeatClient FindByProcessId(int processId)
 		{
-			return _clients.FirstOrDefault((client) => client.ProcessName == processName);
+			return _clients.FirstOrDefault((client) => client.ProcessId == processId);
 		}
 		/// <summary>
 		/// Returns true if the last heartbeat was longer ago than the timeout. 
@@ -214,15 +214,15 @@ namespace WatchdogLib
 		//}
 
 
-		public bool HeartbeatTimedOutOrDisconnect(string processName, uint timeout)
+		public bool HeartbeatTimedOutOrDisconnect(int processId, uint timeout)
 		{
-			return HeartbeatTimedOut(processName, timeout) || !Connected(processName);
+			return HeartbeatTimedOut(processId, timeout) || !Connected(processId);
 		}
 
 
-		public bool HeartbeatTimedOut(string processName, uint timeout)
+		public bool HeartbeatTimedOut(int processId, uint timeout)
 		{
-			var client = FindByProcessName(processName);
+			var client = FindByProcessId(processId);
 			if (client == null)
 			{
 				// No process with this name connected, so no timeout
@@ -243,15 +243,15 @@ namespace WatchdogLib
 			}
 		}
 
-		public bool Connected(string processName)
+		public bool Connected(int processId)
 		{
-			var client = FindByProcessName(processName);
+			var client = FindByProcessId(processId);
 			return (client != null);
 		}
 
-		public bool KillRequested(string processName)
+		public bool KillRequested(int processId)
 		{
-			var client = FindByProcessName(processName);
+			var client = FindByProcessId(processId);
 			if (client == null) return false;
 			var performKill = client.RequestKill && (DateTime.Now > client.KillTime);
 			if (performKill) client.RequestKill = false; // Kill request only returns true once

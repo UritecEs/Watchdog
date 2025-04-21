@@ -21,10 +21,14 @@ namespace WatchdogLib
 	/// </summary>
 	public class ApplicationWatcher
 	{
-		private readonly Stopwatch _sleepStopwatch;
+		//private readonly Stopwatch _sleepStopwatch;
 		private readonly Logger _logger;
 		private readonly AsyncWorker asyncWorkerMonitor;
 
+		/// <summary>
+		/// Fires when a new heartbeat is received. Params: sender = applicationhandler
+		/// </summary>
+		public EventHandler HeartbeatEvent;
 
 		/// <summary>
 		/// Gets or sets the list of application handlers which are being monitored.
@@ -39,9 +43,12 @@ namespace WatchdogLib
 		{
 			_logger = logger;
 			ApplicationHandlers = new List<ApplicationHandler>();
-			_sleepStopwatch = new Stopwatch();
+			//_sleepStopwatch = new Stopwatch();
+			// Create and start an asynchronous worker thread for monitoring applications.
 			asyncWorkerMonitor = new AsyncWorker(MonitorJob) { Name = "ApplicationWatcher" };
 			//asyncWorkerMonitor.Start();
+
+			HeartbeatServer.Instance.HeartbeatEvent += HeartbeatServer_OnHeartbeat;
 		}
 
 		public void Pausar()
@@ -58,6 +65,24 @@ namespace WatchdogLib
 				asyncWorkerMonitor.Start();
 		}
 
+		private void HeartbeatServer_OnHeartbeat(object sender, EventArgs eventArgs)
+		{
+			var p = (HeartbeatClient)sender;
+			var app = FindApplication(p.ProcessId);
+			if (app is null)
+				return;
+			HeartbeatEvent?.Invoke(app, null);
+		}
+
+		/// <summary>
+		/// Finds the application that has the process Id
+		/// </summary>
+		/// <param name="ProcessId"></param>
+		/// <returns></returns>
+		private ApplicationHandler FindApplication(int ProcessId)
+		{
+			return ApplicationHandlers.FirstOrDefault(app => app.HasProcess(ProcessId));
+		}
 
 		/// <summary>
 		/// The monitoring job that is periodically executed.
@@ -69,8 +94,8 @@ namespace WatchdogLib
 			try
 			{
 				_logger.Trace("Monitoring {0} applications.", ApplicationHandlers?.Count ?? 0);
-				// Walk through list of applications to see which ones are running
-				_sleepStopwatch.Restart();
+				// Walk through list of applications to see which ones are running.
+				//_sleepStopwatch.Restart();
 				foreach (var applicationHandler in ApplicationHandlers)
 				{
 					applicationHandler?.Check();
@@ -81,13 +106,31 @@ namespace WatchdogLib
 				_logger.Error(e, "Exceptionn in MonitorJob " + e.Message);
 
 			}
-			Thread.Sleep(Math.Max(0, 500 - (int)_sleepStopwatch.ElapsedMilliseconds));
+			// Optionally, you can sleep for a specific interval:
+			// Thread.Sleep(Math.Max(0, 500 - (int)_sleepStopwatch.ElapsedMilliseconds));
+			Thread.Sleep(1000);
 			return true;
 		}
 
 
 		/*
-		public bool AddMonitoredApplication(string applicationName, string applicationPath, int nonResponsiveInterval, uint heartbeatInterval = 15, int minProcesses = 1, int maxProcesses = 1, bool keepExistingNoProcesses = false, bool useHeartbeat = false, bool grantKillRequest = true, bool active = false, uint startupMonitorDelay = 20)
+		/// Registers a new application for monitoring.
+		/// </summary>
+		/// <param name="applicationName">The name of the application.</param>
+		/// <param name="applicationPath">The file system path to the application executable.</param>
+		/// <param name="nonResponsiveInterval">The interval after which a process is considered non-responsive.</param>
+		/// <param name="heartbeatInterval">The heartbeat check interval (default is 15 seconds).</param>
+		/// <param name="minProcesses">The minimum number of processes required (default is 1).</param>
+		/// <param name="maxProcesses">The maximum allowed number of processes (default is 1).</param>
+		/// <param name="keepExistingNoProcesses">Whether to maintain the existing process count even if none are running (default is false).</param>
+		/// <param name="useHeartbeat">Whether heartbeat monitoring is enabled (default is false).</param>
+		/// <param name="grantKillRequest">Whether process kill requests are permitted (default is true).</param>
+		/// <param name="active">Whether the application should be immediately active (default is false).</param>
+		/// <param name="startupMonitorDelay">Delay after startup before starting process monitoring (default is 20 seconds).</param>
+		/// <returns>Returns true if the application was successfully registered for monitoring.</returns>
+		public bool AddMonitoredApplication(string applicationName, string applicationPath, int nonResponsiveInterval,
+			uint heartbeatInterval = 15, int minProcesses = 1, int maxProcesses = 1, bool keepExistingNoProcesses = false,
+			bool useHeartbeat = false, bool grantKillRequest = true, bool active = false, uint startupMonitorDelay = 20)
 		{
 			_logger.Trace("Registering {0} for monitoring", applicationName);
 			ApplicationHandlers.Add(new ApplicationHandler(applicationName, applicationPath, nonResponsiveInterval, heartbeatInterval, minProcesses, maxProcesses, keepExistingNoProcesses, useHeartbeat, grantKillRequest, startupMonitorDelay) { Logger = _logger });

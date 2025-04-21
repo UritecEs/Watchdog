@@ -248,7 +248,7 @@ namespace WatchdogLib
 					continue; // Is still starting up, so ignore
 				}
 				// Check heartbeat soft limit.
-				if (_heartbeatServer.HeartbeatTimedOut(processHandler.Name, HeartbeatInterval / 2) && UseHeartbeat)
+				if (_heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval / 2) && UseHeartbeat)
 				{
 					//todo: add throttling
 					Logger.Warn("No heartbeat received from process {0} within the soft limit", processHandler.Name);
@@ -259,8 +259,8 @@ namespace WatchdogLib
 				//Debug.WriteLine("Process {0} not responding", processHandler.Name);
 
 				var notRespondingAfterInterval = processHandler.NotRespondingAfterInterval;
-				var noHeartbeat = _heartbeatServer.HeartbeatTimedOut(processHandler.Name, HeartbeatInterval) && UseHeartbeat;
-				var requestedKill = _heartbeatServer.KillRequested(processHandler.Name);
+				var noHeartbeat = _heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval) && UseHeartbeat;
+				var requestedKill = _heartbeatServer.KillRequested(processHandler.Process.Id);
 
 				var performKill = notRespondingAfterInterval || noHeartbeat || requestedKill;
 
@@ -465,6 +465,16 @@ namespace WatchdogLib
 				processHandler.StartingInterval = StartupMonitorDelay;
 			}
 
+		}
+
+		/// <summary>
+		/// Returns true if one of the process handlers has the selected processId
+		/// </summary>
+		/// <param name="processId"></param>
+		/// <returns></returns>
+		internal bool HasProcess(int processId)
+		{
+			return ProcessHandlers.Any(p => p?.Process?.Id == processId);
 		}
 	}
 }
