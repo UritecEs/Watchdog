@@ -113,6 +113,9 @@ namespace WatchdogLib
 		{
 			get
 			{
+				// If the other process changes its main window,
+				// the check of Process.Responding might return false if we don't .Refresh() it
+				Process.Refresh();
 				// todo: add heartbeat
 				if (!Process.Responding)
 				{
