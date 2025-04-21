@@ -248,7 +248,7 @@ namespace WatchdogLib
 					continue; // Is still starting up, so ignore
 				}
 				// Check heartbeat soft limit.
-				if (_heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval / 2) && UseHeartbeat)
+				if (UseHeartbeat && _heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval / 2))
 				{
 					//todo: add throttling
 					Logger.Warn("No heartbeat received from process {0} within the soft limit", processHandler.Name);
@@ -259,7 +259,7 @@ namespace WatchdogLib
 				//Debug.WriteLine("Process {0} not responding", processHandler.Name);
 
 				var notRespondingAfterInterval = processHandler.NotRespondingAfterInterval;
-				var noHeartbeat = _heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval) && UseHeartbeat;
+				var noHeartbeat = UseHeartbeat && _heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval);
 				var requestedKill = _heartbeatServer.KillRequested(processHandler.Process.Id);
 
 				var performKill = notRespondingAfterInterval || noHeartbeat || requestedKill;
