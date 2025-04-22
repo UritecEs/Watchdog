@@ -2,11 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using Utilities;
 
 namespace WatchdogLib
 {
-
 	// todo: http://msdn.microsoft.com/en-us/library/system.diagnostics.process.exitcode(v=vs.110).aspx
 	//http://stackoverflow.com/questions/2279181/catch-another-process-unhandled-exception
 	// http://social.msdn.microsoft.com/Forums/vstudio/en-US/62259e21-3280-4d10-a27c-740d35efe51c/catch-another-process-unhandled-exception?forum=csharpgeneral
@@ -48,6 +48,20 @@ namespace WatchdogLib
 	/// </summary>
 	public class ProcessHandler
 	{
+		[DllImport("kernel32.dll")]
+		static extern bool GetExitCodeProcess(IntPtr hProcess, out uint lpExitCode);
+
+		[DllImport("kernel32.dll")]
+		private static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern bool CloseHandle(IntPtr handle);
+
+		[Flags]
+		public enum ProcessAccessFlags : uint
+		{
+			PROCESS_QUERY_LIMITED_INFORMATION = 0x00001000,
+		}
 
 		private readonly object _exitedLock = new object();
 		
@@ -103,9 +117,31 @@ namespace WatchdogLib
 		/// </summary>
 		public bool HasExited
 		{
-			get { return (Process == null) || Process.HasExited; }
+			get { return (Process == null) || ProcessHasExited(Process.Id); }
 		}
-		
+
+		/// <summary>
+		/// Check if the process has exited even if it has higher priviledges
+		/// https://stackoverflow.com/a/57995634/250294
+		/// </summary>
+		/// <returns></returns>
+		private static bool ProcessHasExited(int idProcess)
+		{
+			var hProcess = OpenProcess(ProcessAccessFlags.PROCESS_QUERY_LIMITED_INFORMATION, false, idProcess);
+
+			bool ok = GetExitCodeProcess(hProcess, out uint ExitCode);
+			CloseHandle(hProcess);
+
+			// we don't know what's going on. ignore this case.
+			if (!ok)
+				return false;
+
+			if (ExitCode != 259)
+				LogManager.GetLogger("WatchdogServer").Info("Exited process with ExitCode " + ExitCode.ToString());
+
+			return ExitCode != 259; // ExitCode of 259 is STILL_ACTIVE
+		}
+
 		/// <summary>
 		/// Boolean that indicates if the process is responding.
 		/// </summary>
