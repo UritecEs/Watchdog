@@ -44,7 +44,7 @@ namespace WatchDog
 				_logForm.HideEvent += logForm_Hide;
 
 				_mainForm = new MainForm();
-                _mainForm.Visible = _configuration.ShowMainForm;
+				_mainForm.Visible = _configuration.ShowMainForm;
 				_mainForm.HideEvent += mainForm_Hide;
 
 				_trayIcon.Visible = _configuration.ShowTrayIcon;
@@ -156,7 +156,7 @@ namespace WatchDog
 			private void ShowLogMenuItemClick(object sender, EventArgs e)
 			{
 				_logForm.Visible = true;
-                _configuration.ShowLogForm = true;
+				_configuration.ShowLogForm = true;
 				_configurationSerializer.Serialize(_configuration);
 			}
 
@@ -178,7 +178,7 @@ namespace WatchDog
 
 				if (_trayIcon != null) _trayIcon.Visible = false;
 
-                //Application.Exit();
+				//Application.Exit();
 			}
 
 			private void TrayIconClick(object sender, EventArgs e)
@@ -250,7 +250,7 @@ namespace WatchDog
 				//var applicationHandler = new ApplicationHandler("MonitoredApplication", @"D:\DevelPers\WatchDog\MonitoredApplication\bin\Release\MonitoredApplication.exe", 10, 10, 1, 1,false, true) {Active = true};
 				//applicationWatcher.ApplicationHandlers.Add(applicationHandler);
 				_mainForm.ApplicationWatcher = applicationWatcher;
-                new MainFormVm(_mainForm, applicationWatcher, _configuration, _configurationSerializer);
+				new MainFormVm(_mainForm, applicationWatcher, _configuration, _configurationSerializer);
 			}
 
 

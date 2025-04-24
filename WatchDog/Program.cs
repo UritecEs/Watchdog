@@ -12,17 +12,18 @@ namespace WatchDog
 	class Program
 	{
 		[STAThread]
-        static void Main(string[] args)
-        {
-            ExceptionsManager.Logger = null;
-            ExceptionsManager.TrayIcon = null;
-            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length <= 1)
-            {
+		static void Main(string[] args)
+		{
+			ExceptionsManager.Logger = null;
+			ExceptionsManager.TrayIcon = null;
 
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new TrayIcon());
-            }
-        }
-    }
+			// Run only one instance
+			if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length <= 1)
+			{
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Application.Run(new TrayIcon());
+			}
+		}
+	}
 }
