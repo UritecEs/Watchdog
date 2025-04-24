@@ -249,8 +249,8 @@ namespace WatchDog
 				//applicationWatcher.AddMonitoredApplication("MonitoredApplication", @"D:\DevelPers\WatchDog\MonitoredApplication\bin\Release\MonitoredApplication.exe",10,10,1,1,false,true,true,true);
 				//var applicationHandler = new ApplicationHandler("MonitoredApplication", @"D:\DevelPers\WatchDog\MonitoredApplication\bin\Release\MonitoredApplication.exe", 10, 10, 1, 1,false, true) {Active = true};
 				//applicationWatcher.ApplicationHandlers.Add(applicationHandler);
-
-				new MainFormVm(_mainForm, applicationWatcher, _configuration, _configurationSerializer);
+				_mainForm.ApplicationWatcher = applicationWatcher;
+                new MainFormVm(_mainForm, applicationWatcher, _configuration, _configurationSerializer);
 			}
 
 
