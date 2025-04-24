@@ -1,6 +1,7 @@
 ﻿using System;
 using WatchDog.TrayIconTest;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace WatchDog
 {
@@ -11,13 +12,17 @@ namespace WatchDog
 	class Program
 	{
 		[STAThread]
-		static void Main(string[] args)
-		{
-			ExceptionsManager.Logger = null;
-			ExceptionsManager.TrayIcon = null;
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new TrayIcon());
-		}
-	}
+        static void Main(string[] args)
+        {
+            ExceptionsManager.Logger = null;
+            ExceptionsManager.TrayIcon = null;
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length <= 1)
+            {
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new TrayIcon());
+            }
+        }
+    }
 }
