@@ -45,9 +45,12 @@ namespace WatchDog
 
 		private void ApplicationWatcherOnHeartbeat(object sender, EventArgs e)
 		{
+			// si no tenemos handle creado entonces no intentaremos interactuar con los controles
+			if (!_mainForm.IsHandleCreated)
+				return;
+
 			_mainForm.Invoke(new MethodInvoker(delegate
 			{
-
 				var i = _mainForm.listBoxMonitoredApplications.SelectedIndex;
 				if (i < 0)
 					return;
@@ -58,7 +61,15 @@ namespace WatchDog
 				if (app.Id != selectedApplication.Id)
 					return;
 
-				_mainForm.lblLastHeartbeat.Text = DateTime.Now.ToString("HH:mm:ss");
+				try
+				{
+					_mainForm.lblLastHeartbeat.Text = DateTime.Now.ToString("HH:mm:ss");
+				}
+				catch (Exception)
+				{
+					//si la ventana no se ha mostrado entonces lanza excepción 
+					// No se puede llamar a Invoke o a BeginInvoke en un control hasta que se haya creado el identificador de ventana.
+				}
 			}));
 		}
 

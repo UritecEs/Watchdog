@@ -78,10 +78,16 @@ namespace WatchDog
 					grpMonitoring.BackColor = SystemColors.Control;
 				}
 			}
-			Invoke(new MethodInvoker(delegate
+			if (IsHandleCreated)
+			{
+				Invoke(new MethodInvoker(delegate
+				{
+					btnContinue.Text = "Start in " + WatchdogDelay;
+				}));
+			} else
 			{
 				btnContinue.Text = "Start in " + WatchdogDelay;
-			}));
+			}
 		}
 
 		//private void ButtonActivateClick(object sender, EventArgs e)
