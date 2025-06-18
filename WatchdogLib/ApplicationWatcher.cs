@@ -103,8 +103,7 @@ namespace WatchdogLib
 			}
 			catch (Exception e)
 			{
-				_logger.Error(e, "Exceptionn in MonitorJob " + e.Message);
-
+				_logger.Error(e, "Exception in MonitorJob " + e.Message);
 			}
 			// Optionally, you can sleep for a specific interval:
 			// Thread.Sleep(Math.Max(0, 500 - (int)_sleepStopwatch.ElapsedMilliseconds));

@@ -263,6 +263,8 @@ namespace WatchdogLib
 
 				//if (processHandler.Responding && !_heartbeatServer.HeartbeatHardTimeout(processHandler.Name)) continue;
 				//Debug.WriteLine("Process {0} not responding", processHandler.Name);
+				if (processHandler.Process.HasExited)
+					continue;
 
 				var notRespondingAfterInterval = processHandler.NotRespondingAfterInterval;
 				var noHeartbeat = UseHeartbeat && _heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval);
