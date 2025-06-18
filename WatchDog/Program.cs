@@ -2,6 +2,7 @@
 using WatchDog.TrayIconTest;
 using System.Windows.Forms;
 using System.Diagnostics;
+using NLog;
 
 namespace WatchDog
 {
@@ -18,12 +19,16 @@ namespace WatchDog
 			ExceptionsManager.TrayIcon = null;
 
 			// Run only one instance
-			if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length <= 1)
+			if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
 			{
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-				Application.Run(new TrayIcon());
+				LogManager.GetLogger("WatchdogServer").Debug("There's another instance already running. Don't start new one.");
+				LogManager.Flush();
+				return;
 			}
+
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.Run(new TrayIcon());
 		}
 	}
 }

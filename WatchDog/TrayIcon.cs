@@ -175,7 +175,7 @@ namespace WatchDog
 			private void OnApplicationExit(object sender, EventArgs e)
 			{
 				_logger.Info("Stopping the watchdog application");
-
+				LogManager.Flush();
 				if (_trayIcon != null) _trayIcon.Visible = false;
 
 				//Application.Exit();
