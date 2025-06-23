@@ -245,7 +245,16 @@ namespace WatchdogLib
 
 				// Skip processes that have already exited.
 				if (processHandler.HasExited) continue; // We will deal with this later
-														
+				try
+				{
+					if (processHandler.Process.HasExited)
+						continue;
+				}
+				catch (Exception)
+				{
+					continue;
+				}
+
 				// If still in startup phase, skip checking.
 				if (processHandler.IsStarting)
 				{
@@ -263,9 +272,7 @@ namespace WatchdogLib
 
 				//if (processHandler.Responding && !_heartbeatServer.HeartbeatHardTimeout(processHandler.Name)) continue;
 				//Debug.WriteLine("Process {0} not responding", processHandler.Name);
-				if (processHandler.Process.HasExited)
-					continue;
-
+				
 				var notRespondingAfterInterval = processHandler.NotRespondingAfterInterval;
 				var noHeartbeat = UseHeartbeat && _heartbeatServer.HeartbeatTimedOut(processHandler.Process.Id, HeartbeatInterval);
 				var requestedKill = _heartbeatServer.KillRequested(processHandler.Process.Id);
